@@ -9,3 +9,59 @@ import { Meta } from "@storybook/addon-docs/blocks";
 * One component per file.
 * One component per directory. Though it may make sense to group similar components into the same directory, we’ve found it’s easier to document components when each one has its own directory.
 * Implementation (.ts) and styles of a component should live in the same directory.
+
+```bash
+├── colibri-button
+│   ├── colibri-button.component.ts
+│   ├── colibri-button.component.html
+│   ├── colibri-button.component.scss
+│   ├── colibri-button.component.tokens.scss
+│   ├── colibri-button.component.tokens.json
+│   ├── colibri-button.component.spec.ts
+│   ├── colibri-button.component.e2e.ts
+│   ├── colibri-button.component.stories.ts
+│   └── colibri-button.module.ts
+├── colibri-button-group
+│   ├── colibri-button-group.component.ts
+│   ├── colibri-button-group.component.html
+│   ├── colibri-button-group.component.scss
+│   ├── colibri-button-group.component.tokens.scss
+│   ├── colibri-button-group.component.tokens.json
+│   ├── colibri-button-group.component.spec.ts
+│   ├── colibri-button-group.component.e2e.ts
+│   ├── colibri-button-group.component.stories.ts
+│   └── colibri-button-group.module.ts
+
+```
+# Naming
+
+## HTML tag
+
+### Prefix
+The prefix has a major role when you are creating a collection of components intended to be used across different projects,
+like @colibri/components. Components are not scoped because they are globally declared within the webpage,
+which means an “unique” prefix is needed to prevent collisions. The prefix is also able help to quickly identify the collection
+of an component. This also goes along with the [Angular General Naming Guidelines](https://angular.io/guide/styleguide#general-naming-guidelines).
+
+DO NOT do this:
+
+```html
+<component>
+<custom-compnent>
+<spectrum-component>
+```
+Instead, use the "colibri" prefix for all components:
+```html
+<colibri-button>
+<colibri-icon>
+```
+
+### Name
+Different disciplines use component names to communicate about them. Hence, they must be short, meaningful and pronounceable.
+
+* Noun rather than verb: Components are not actions, they are conceptually “things.” It is better to use nouns instead of verbs, such as “animation” instead of “animating.” “input,” “tab,” “navigation,” and “menu” are some examples.
+* Meaningful: Not over specific, not overly abstract.
+* Short: Maximum of 2 or 3 words.
+* Pronounceable: We want to be able talk about them.
+* Custom element spec compliant: Don’t use reserved names. Reserved names include: annotation-xml, font-face, font-face-src, font-face-uri, font-face-format, font-face-name, missing-glyph, color-profile.
+* Examples: `<colibri-button>, <colibri-icon>, <colibri-header>`.
