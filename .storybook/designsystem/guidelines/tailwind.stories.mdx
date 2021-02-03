@@ -1,0 +1,21 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guidelines/TailwindCSS" />
+
+# TailwindCSS
+
+## Introduction
+[Tailwind](https://tailwindcss.com/docs) provides a very practicable way, to automatically generate utility classes, based on a json config file.
+They are very similiar to the classes we are alreading using in our desktop application, like `l-mt0` which represents `margin-top: 0` -
+the tailwind couterpart e.g. is `m-0`, see [tailwind margin utility classes](https://tailwindcss.com/docs/margin).
+
+## Config
+Inside `tailwind.config.js` i created a basic set (76kB) of utility classes which could be handy for us.
+This can always be tweaked for our needs.
+The config is based on the Global Design Tokens and there should never be component based design tokens in it.
+
+## Angular Integration
+To integrate Tailwind into angular without ejecting it, i followed this article [UPDATED: Angular 11 and TailwindCSS 2](https://jacobneterer.medium.com/angular-and-tailwindcss-2388fb6e0bab).
+
+## VS Code IntelliSense
+[Intelligent Tailwind CSS tooling for Visual Studio Code.](https://tailwindcss.com/docs/intellisense)
