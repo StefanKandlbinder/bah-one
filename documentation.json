@@ -1,6 +1,187 @@
 {
     "pipes": [],
-    "interfaces": [],
+    "interfaces": [
+        {
+            "name": "ResizeObserverCallback",
+            "id": "interface-ResizeObserverCallback-3aeee18b2dfcbd41efaac647dac08ff9",
+            "file": "src/app/shared/directives/colibri-resize-observer/colibri-resize-observer.directive.ts",
+            "type": "interface",
+            "sourceCode": "import { Directive, ElementRef, OnDestroy, OnInit } from '@angular/core';\n\n// Type definitions for non-npm package resize-observer-browser 0.1\n// Project: https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver, https://developers.google.com/web/updates/2016/10/resizeobserver, https://wicg.github.io/ResizeObserver/\n// Definitions by: Chives <https://github.com/chivesrs>\n//                 William Furr <https://github.com/wffurr>\n//                 Alexander Shushunov <https://github.com/AlexanderShushunov>\n// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped\n\ninterface Window {\n  ResizeObserver: typeof ResizeObserver;\n}\n\ninterface ResizeObserverOptions {\n  /**\n   * Sets which box model the observer will observe changes to. Possible values\n   * are `content-box` (the default), and `border-box`.\n   *\n   * @default 'content-box'\n   */\n  box?: 'content-box' | 'border-box' | 'device-pixel-content-box';\n}\n\ninterface ResizeObserverSize {\n  readonly inlineSize: number;\n  readonly blockSize: number;\n}\n\ninterface ResizeObserver {\n  disconnect(): void;\n  observe(target: Element, options?: ResizeObserverOptions): void;\n  unobserve(target: Element): void;\n}\n\ndeclare var ResizeObserver: {\n  new (callback: ResizeObserverCallback): ResizeObserver;\n  prototype: ResizeObserver;\n};\n\ninterface ResizeObserverCallback {\n  (entries: ResizeObserverEntry[], observer: ResizeObserver): void;\n}\n\ninterface ResizeObserverEntry {\n  readonly target: Element;\n  readonly contentRect: DOMRectReadOnly;\n  readonly borderBoxSize: ReadonlyArray<ResizeObserverSize>;\n  readonly contentBoxSize: ReadonlyArray<ResizeObserverSize>;\n  readonly devicePixelContentBoxSize?: ReadonlyArray<ResizeObserverSize>;\n}\n\n@Directive({\n  selector: '[data-rob]',\n})\nexport class ColibriResizeObserverDirective implements OnInit, OnDestroy {\n  private resizeObserver: any;\n\n  constructor(private el: ElementRef<Element>) {}\n\n  /**\n   * initialize the ResizeObserver and set the corresponding classes\n   */\n  ngOnInit(): void {\n    this.resizeObserver = new ResizeObserver((entries) => {\n      if (entries.length) {\n        for (let entry of entries) {\n          this.setClasses(entry);\n        }\n      }\n    });\n\n    this.resizeObserver.observe(this.el.nativeElement, { box: 'border-box' });\n  }\n\n  ngOnDestroy(): void {\n    this.resizeObserver.disconnect();\n    this.resizeObserver = null;\n  }\n\n  /**\n   * Return a difference array of two arrays\n   * @param {array} arr1 - the first array.\n   * @param {array} arr2 - the second array.\n   * @return {array} the difference array of arr1 and arr2.\n   */\n  diff(arr1: Array<string>, arr2: Array<string>) {\n    return arr1\n      .filter((x) => !arr2.includes(x))\n      .concat(arr2.filter((x) => !arr1.includes(x)));\n  }\n\n  /**\n   * Adds or removes all the relevant classes depending on\n   * the size of the observed element which are defined by\n   * data-rob-{breakpoint}=\"{css classes}\"\n   * @param {ResizeObserverEntry} entry - the observed elements.\n   */\n  setClasses(entry: ResizeObserverEntry) {\n    let obj = entry.target as HTMLElement;\n\n    // ascending sorting of the breakpoints\n    // TODO: sort ascending\n    let robs = Object.entries(obj.dataset);\n\n    // let initClasses = robs[0][1].split(\" \");\n    let actualClasses = entry.target.classList.length\n      ? entry.target.classList.value.split(' ')\n      : [];\n    let activeClasses: string[] = [];\n    let diffClasses: string[] = [];\n\n    if (robs.length) {\n      for (let [key, value] of robs) {\n        // get the breakpoint of the entry: [data-rob-320]\n        const breakpoint = key.split('-')[1] ? key.split('-')[1] : '0';\n\n        /*\n         * if the width of the element is bigger than the breakpoint\n         * get the css classes of the previous and the next breakpoint\n         * and set the cssClasses to the actual values\n         */\n        if (entry.contentRect.width >= parseInt(breakpoint, 10)) {\n          // data-rob-320=\"card--small u-margin-top--2\"\n          activeClasses = value ? value.split(' ') : [];\n        }\n      }\n    }\n\n    diffClasses = this.diff(activeClasses, actualClasses);\n\n    /*\n     * if there are classes from before remove them\n     */\n    if (diffClasses.length) {\n      entry.target.classList.remove(...diffClasses);\n    }\n\n    entry.target.classList.add(...activeClasses);\n  }\n}\n\n/*\nCopyright Google LLC. All Rights Reserved.\nUse of this source code is governed by an MIT-style license that\ncan be found in the LICENSE file at https://angular.io/license\n*/\n",
+            "properties": [
+                {
+                    "id": "call-declaration-3aeee18b2dfcbd41efaac647dac08ff9",
+                    "args": [
+                        {
+                            "name": "entries",
+                            "type": "ResizeObserverEntry[]"
+                        },
+                        {
+                            "name": "observer",
+                            "type": "ResizeObserver"
+                        }
+                    ],
+                    "returnType": "void",
+                    "line": 40
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 157,
+            "methods": []
+        },
+        {
+            "name": "ResizeObserverEntry",
+            "id": "interface-ResizeObserverEntry-3aeee18b2dfcbd41efaac647dac08ff9",
+            "file": "src/app/shared/directives/colibri-resize-observer/colibri-resize-observer.directive.ts",
+            "type": "interface",
+            "sourceCode": "import { Directive, ElementRef, OnDestroy, OnInit } from '@angular/core';\n\n// Type definitions for non-npm package resize-observer-browser 0.1\n// Project: https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver, https://developers.google.com/web/updates/2016/10/resizeobserver, https://wicg.github.io/ResizeObserver/\n// Definitions by: Chives <https://github.com/chivesrs>\n//                 William Furr <https://github.com/wffurr>\n//                 Alexander Shushunov <https://github.com/AlexanderShushunov>\n// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped\n\ninterface Window {\n  ResizeObserver: typeof ResizeObserver;\n}\n\ninterface ResizeObserverOptions {\n  /**\n   * Sets which box model the observer will observe changes to. Possible values\n   * are `content-box` (the default), and `border-box`.\n   *\n   * @default 'content-box'\n   */\n  box?: 'content-box' | 'border-box' | 'device-pixel-content-box';\n}\n\ninterface ResizeObserverSize {\n  readonly inlineSize: number;\n  readonly blockSize: number;\n}\n\ninterface ResizeObserver {\n  disconnect(): void;\n  observe(target: Element, options?: ResizeObserverOptions): void;\n  unobserve(target: Element): void;\n}\n\ndeclare var ResizeObserver: {\n  new (callback: ResizeObserverCallback): ResizeObserver;\n  prototype: ResizeObserver;\n};\n\ninterface ResizeObserverCallback {\n  (entries: ResizeObserverEntry[], observer: ResizeObserver): void;\n}\n\ninterface ResizeObserverEntry {\n  readonly target: Element;\n  readonly contentRect: DOMRectReadOnly;\n  readonly borderBoxSize: ReadonlyArray<ResizeObserverSize>;\n  readonly contentBoxSize: ReadonlyArray<ResizeObserverSize>;\n  readonly devicePixelContentBoxSize?: ReadonlyArray<ResizeObserverSize>;\n}\n\n@Directive({\n  selector: '[data-rob]',\n})\nexport class ColibriResizeObserverDirective implements OnInit, OnDestroy {\n  private resizeObserver: any;\n\n  constructor(private el: ElementRef<Element>) {}\n\n  /**\n   * initialize the ResizeObserver and set the corresponding classes\n   */\n  ngOnInit(): void {\n    this.resizeObserver = new ResizeObserver((entries) => {\n      if (entries.length) {\n        for (let entry of entries) {\n          this.setClasses(entry);\n        }\n      }\n    });\n\n    this.resizeObserver.observe(this.el.nativeElement, { box: 'border-box' });\n  }\n\n  ngOnDestroy(): void {\n    this.resizeObserver.disconnect();\n    this.resizeObserver = null;\n  }\n\n  /**\n   * Return a difference array of two arrays\n   * @param {array} arr1 - the first array.\n   * @param {array} arr2 - the second array.\n   * @return {array} the difference array of arr1 and arr2.\n   */\n  diff(arr1: Array<string>, arr2: Array<string>) {\n    return arr1\n      .filter((x) => !arr2.includes(x))\n      .concat(arr2.filter((x) => !arr1.includes(x)));\n  }\n\n  /**\n   * Adds or removes all the relevant classes depending on\n   * the size of the observed element which are defined by\n   * data-rob-{breakpoint}=\"{css classes}\"\n   * @param {ResizeObserverEntry} entry - the observed elements.\n   */\n  setClasses(entry: ResizeObserverEntry) {\n    let obj = entry.target as HTMLElement;\n\n    // ascending sorting of the breakpoints\n    // TODO: sort ascending\n    let robs = Object.entries(obj.dataset);\n\n    // let initClasses = robs[0][1].split(\" \");\n    let actualClasses = entry.target.classList.length\n      ? entry.target.classList.value.split(' ')\n      : [];\n    let activeClasses: string[] = [];\n    let diffClasses: string[] = [];\n\n    if (robs.length) {\n      for (let [key, value] of robs) {\n        // get the breakpoint of the entry: [data-rob-320]\n        const breakpoint = key.split('-')[1] ? key.split('-')[1] : '0';\n\n        /*\n         * if the width of the element is bigger than the breakpoint\n         * get the css classes of the previous and the next breakpoint\n         * and set the cssClasses to the actual values\n         */\n        if (entry.contentRect.width >= parseInt(breakpoint, 10)) {\n          // data-rob-320=\"card--small u-margin-top--2\"\n          activeClasses = value ? value.split(' ') : [];\n        }\n      }\n    }\n\n    diffClasses = this.diff(activeClasses, actualClasses);\n\n    /*\n     * if there are classes from before remove them\n     */\n    if (diffClasses.length) {\n      entry.target.classList.remove(...diffClasses);\n    }\n\n    entry.target.classList.add(...activeClasses);\n  }\n}\n\n/*\nCopyright Google LLC. All Rights Reserved.\nUse of this source code is governed by an MIT-style license that\ncan be found in the LICENSE file at https://angular.io/license\n*/\n",
+            "properties": [
+                {
+                    "name": "borderBoxSize",
+                    "type": "ReadonlyArray<ResizeObserverSize>",
+                    "optional": false,
+                    "description": "",
+                    "line": 47,
+                    "modifierKind": [
+                        132
+                    ]
+                },
+                {
+                    "name": "contentBoxSize",
+                    "type": "ReadonlyArray<ResizeObserverSize>",
+                    "optional": false,
+                    "description": "",
+                    "line": 48,
+                    "modifierKind": [
+                        132
+                    ]
+                },
+                {
+                    "name": "contentRect",
+                    "type": "DOMRectReadOnly",
+                    "optional": false,
+                    "description": "",
+                    "line": 46,
+                    "modifierKind": [
+                        132
+                    ]
+                },
+                {
+                    "name": "devicePixelContentBoxSize",
+                    "type": "ReadonlyArray<ResizeObserverSize>",
+                    "optional": true,
+                    "description": "",
+                    "line": 49,
+                    "modifierKind": [
+                        132
+                    ]
+                },
+                {
+                    "name": "target",
+                    "type": "Element",
+                    "optional": false,
+                    "description": "",
+                    "line": 45,
+                    "modifierKind": [
+                        132
+                    ]
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 150,
+            "methods": []
+        },
+        {
+            "name": "ResizeObserverOptions",
+            "id": "interface-ResizeObserverOptions-3aeee18b2dfcbd41efaac647dac08ff9",
+            "file": "src/app/shared/directives/colibri-resize-observer/colibri-resize-observer.directive.ts",
+            "type": "interface",
+            "sourceCode": "import { Directive, ElementRef, OnDestroy, OnInit } from '@angular/core';\n\n// Type definitions for non-npm package resize-observer-browser 0.1\n// Project: https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver, https://developers.google.com/web/updates/2016/10/resizeobserver, https://wicg.github.io/ResizeObserver/\n// Definitions by: Chives <https://github.com/chivesrs>\n//                 William Furr <https://github.com/wffurr>\n//                 Alexander Shushunov <https://github.com/AlexanderShushunov>\n// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped\n\ninterface Window {\n  ResizeObserver: typeof ResizeObserver;\n}\n\ninterface ResizeObserverOptions {\n  /**\n   * Sets which box model the observer will observe changes to. Possible values\n   * are `content-box` (the default), and `border-box`.\n   *\n   * @default 'content-box'\n   */\n  box?: 'content-box' | 'border-box' | 'device-pixel-content-box';\n}\n\ninterface ResizeObserverSize {\n  readonly inlineSize: number;\n  readonly blockSize: number;\n}\n\ninterface ResizeObserver {\n  disconnect(): void;\n  observe(target: Element, options?: ResizeObserverOptions): void;\n  unobserve(target: Element): void;\n}\n\ndeclare var ResizeObserver: {\n  new (callback: ResizeObserverCallback): ResizeObserver;\n  prototype: ResizeObserver;\n};\n\ninterface ResizeObserverCallback {\n  (entries: ResizeObserverEntry[], observer: ResizeObserver): void;\n}\n\ninterface ResizeObserverEntry {\n  readonly target: Element;\n  readonly contentRect: DOMRectReadOnly;\n  readonly borderBoxSize: ReadonlyArray<ResizeObserverSize>;\n  readonly contentBoxSize: ReadonlyArray<ResizeObserverSize>;\n  readonly devicePixelContentBoxSize?: ReadonlyArray<ResizeObserverSize>;\n}\n\n@Directive({\n  selector: '[data-rob]',\n})\nexport class ColibriResizeObserverDirective implements OnInit, OnDestroy {\n  private resizeObserver: any;\n\n  constructor(private el: ElementRef<Element>) {}\n\n  /**\n   * initialize the ResizeObserver and set the corresponding classes\n   */\n  ngOnInit(): void {\n    this.resizeObserver = new ResizeObserver((entries) => {\n      if (entries.length) {\n        for (let entry of entries) {\n          this.setClasses(entry);\n        }\n      }\n    });\n\n    this.resizeObserver.observe(this.el.nativeElement, { box: 'border-box' });\n  }\n\n  ngOnDestroy(): void {\n    this.resizeObserver.disconnect();\n    this.resizeObserver = null;\n  }\n\n  /**\n   * Return a difference array of two arrays\n   * @param {array} arr1 - the first array.\n   * @param {array} arr2 - the second array.\n   * @return {array} the difference array of arr1 and arr2.\n   */\n  diff(arr1: Array<string>, arr2: Array<string>) {\n    return arr1\n      .filter((x) => !arr2.includes(x))\n      .concat(arr2.filter((x) => !arr1.includes(x)));\n  }\n\n  /**\n   * Adds or removes all the relevant classes depending on\n   * the size of the observed element which are defined by\n   * data-rob-{breakpoint}=\"{css classes}\"\n   * @param {ResizeObserverEntry} entry - the observed elements.\n   */\n  setClasses(entry: ResizeObserverEntry) {\n    let obj = entry.target as HTMLElement;\n\n    // ascending sorting of the breakpoints\n    // TODO: sort ascending\n    let robs = Object.entries(obj.dataset);\n\n    // let initClasses = robs[0][1].split(\" \");\n    let actualClasses = entry.target.classList.length\n      ? entry.target.classList.value.split(' ')\n      : [];\n    let activeClasses: string[] = [];\n    let diffClasses: string[] = [];\n\n    if (robs.length) {\n      for (let [key, value] of robs) {\n        // get the breakpoint of the entry: [data-rob-320]\n        const breakpoint = key.split('-')[1] ? key.split('-')[1] : '0';\n\n        /*\n         * if the width of the element is bigger than the breakpoint\n         * get the css classes of the previous and the next breakpoint\n         * and set the cssClasses to the actual values\n         */\n        if (entry.contentRect.width >= parseInt(breakpoint, 10)) {\n          // data-rob-320=\"card--small u-margin-top--2\"\n          activeClasses = value ? value.split(' ') : [];\n        }\n      }\n    }\n\n    diffClasses = this.diff(activeClasses, actualClasses);\n\n    /*\n     * if there are classes from before remove them\n     */\n    if (diffClasses.length) {\n      entry.target.classList.remove(...diffClasses);\n    }\n\n    entry.target.classList.add(...activeClasses);\n  }\n}\n\n/*\nCopyright Google LLC. All Rights Reserved.\nUse of this source code is governed by an MIT-style license that\ncan be found in the LICENSE file at https://angular.io/license\n*/\n",
+            "properties": [
+                {
+                    "name": "box",
+                    "type": "\"content-box\" | \"border-box\" | \"device-pixel-content-box\"",
+                    "optional": true,
+                    "description": "<p>Sets which box model the observer will observe changes to. Possible values\nare <code>content-box</code> (the default), and <code>border-box</code>.</p>\n",
+                    "line": 21,
+                    "jsdoctags": [
+                        {
+                            "pos": 837,
+                            "end": 846,
+                            "flags": 0,
+                            "kind": 288,
+                            "atToken": {
+                                "pos": 837,
+                                "end": 838,
+                                "flags": 0,
+                                "kind": 57
+                            },
+                            "tagName": {
+                                "pos": 838,
+                                "end": 845,
+                                "flags": 0,
+                                "escapedText": "default"
+                            },
+                            "comment": "<p>&#39;content-box&#39;</p>\n"
+                        }
+                    ]
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 150,
+            "methods": []
+        },
+        {
+            "name": "ResizeObserverSize",
+            "id": "interface-ResizeObserverSize-3aeee18b2dfcbd41efaac647dac08ff9",
+            "file": "src/app/shared/directives/colibri-resize-observer/colibri-resize-observer.directive.ts",
+            "type": "interface",
+            "sourceCode": "import { Directive, ElementRef, OnDestroy, OnInit } from '@angular/core';\n\n// Type definitions for non-npm package resize-observer-browser 0.1\n// Project: https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver, https://developers.google.com/web/updates/2016/10/resizeobserver, https://wicg.github.io/ResizeObserver/\n// Definitions by: Chives <https://github.com/chivesrs>\n//                 William Furr <https://github.com/wffurr>\n//                 Alexander Shushunov <https://github.com/AlexanderShushunov>\n// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped\n\ninterface Window {\n  ResizeObserver: typeof ResizeObserver;\n}\n\ninterface ResizeObserverOptions {\n  /**\n   * Sets which box model the observer will observe changes to. Possible values\n   * are `content-box` (the default), and `border-box`.\n   *\n   * @default 'content-box'\n   */\n  box?: 'content-box' | 'border-box' | 'device-pixel-content-box';\n}\n\ninterface ResizeObserverSize {\n  readonly inlineSize: number;\n  readonly blockSize: number;\n}\n\ninterface ResizeObserver {\n  disconnect(): void;\n  observe(target: Element, options?: ResizeObserverOptions): void;\n  unobserve(target: Element): void;\n}\n\ndeclare var ResizeObserver: {\n  new (callback: ResizeObserverCallback): ResizeObserver;\n  prototype: ResizeObserver;\n};\n\ninterface ResizeObserverCallback {\n  (entries: ResizeObserverEntry[], observer: ResizeObserver): void;\n}\n\ninterface ResizeObserverEntry {\n  readonly target: Element;\n  readonly contentRect: DOMRectReadOnly;\n  readonly borderBoxSize: ReadonlyArray<ResizeObserverSize>;\n  readonly contentBoxSize: ReadonlyArray<ResizeObserverSize>;\n  readonly devicePixelContentBoxSize?: ReadonlyArray<ResizeObserverSize>;\n}\n\n@Directive({\n  selector: '[data-rob]',\n})\nexport class ColibriResizeObserverDirective implements OnInit, OnDestroy {\n  private resizeObserver: any;\n\n  constructor(private el: ElementRef<Element>) {}\n\n  /**\n   * initialize the ResizeObserver and set the corresponding classes\n   */\n  ngOnInit(): void {\n    this.resizeObserver = new ResizeObserver((entries) => {\n      if (entries.length) {\n        for (let entry of entries) {\n          this.setClasses(entry);\n        }\n      }\n    });\n\n    this.resizeObserver.observe(this.el.nativeElement, { box: 'border-box' });\n  }\n\n  ngOnDestroy(): void {\n    this.resizeObserver.disconnect();\n    this.resizeObserver = null;\n  }\n\n  /**\n   * Return a difference array of two arrays\n   * @param {array} arr1 - the first array.\n   * @param {array} arr2 - the second array.\n   * @return {array} the difference array of arr1 and arr2.\n   */\n  diff(arr1: Array<string>, arr2: Array<string>) {\n    return arr1\n      .filter((x) => !arr2.includes(x))\n      .concat(arr2.filter((x) => !arr1.includes(x)));\n  }\n\n  /**\n   * Adds or removes all the relevant classes depending on\n   * the size of the observed element which are defined by\n   * data-rob-{breakpoint}=\"{css classes}\"\n   * @param {ResizeObserverEntry} entry - the observed elements.\n   */\n  setClasses(entry: ResizeObserverEntry) {\n    let obj = entry.target as HTMLElement;\n\n    // ascending sorting of the breakpoints\n    // TODO: sort ascending\n    let robs = Object.entries(obj.dataset);\n\n    // let initClasses = robs[0][1].split(\" \");\n    let actualClasses = entry.target.classList.length\n      ? entry.target.classList.value.split(' ')\n      : [];\n    let activeClasses: string[] = [];\n    let diffClasses: string[] = [];\n\n    if (robs.length) {\n      for (let [key, value] of robs) {\n        // get the breakpoint of the entry: [data-rob-320]\n        const breakpoint = key.split('-')[1] ? key.split('-')[1] : '0';\n\n        /*\n         * if the width of the element is bigger than the breakpoint\n         * get the css classes of the previous and the next breakpoint\n         * and set the cssClasses to the actual values\n         */\n        if (entry.contentRect.width >= parseInt(breakpoint, 10)) {\n          // data-rob-320=\"card--small u-margin-top--2\"\n          activeClasses = value ? value.split(' ') : [];\n        }\n      }\n    }\n\n    diffClasses = this.diff(activeClasses, actualClasses);\n\n    /*\n     * if there are classes from before remove them\n     */\n    if (diffClasses.length) {\n      entry.target.classList.remove(...diffClasses);\n    }\n\n    entry.target.classList.add(...activeClasses);\n  }\n}\n\n/*\nCopyright Google LLC. All Rights Reserved.\nUse of this source code is governed by an MIT-style license that\ncan be found in the LICENSE file at https://angular.io/license\n*/\n",
+            "properties": [
+                {
+                    "name": "blockSize",
+                    "type": "number",
+                    "optional": false,
+                    "description": "",
+                    "line": 26,
+                    "modifierKind": [
+                        132
+                    ]
+                },
+                {
+                    "name": "inlineSize",
+                    "type": "number",
+                    "optional": false,
+                    "description": "",
+                    "line": 25,
+                    "modifierKind": [
+                        132
+                    ]
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 150,
+            "methods": []
+        },
+        {
+            "name": "Window",
+            "id": "interface-Window-3aeee18b2dfcbd41efaac647dac08ff9",
+            "file": "src/app/shared/directives/colibri-resize-observer/colibri-resize-observer.directive.ts",
+            "type": "interface",
+            "sourceCode": "import { Directive, ElementRef, OnDestroy, OnInit } from '@angular/core';\n\n// Type definitions for non-npm package resize-observer-browser 0.1\n// Project: https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver, https://developers.google.com/web/updates/2016/10/resizeobserver, https://wicg.github.io/ResizeObserver/\n// Definitions by: Chives <https://github.com/chivesrs>\n//                 William Furr <https://github.com/wffurr>\n//                 Alexander Shushunov <https://github.com/AlexanderShushunov>\n// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped\n\ninterface Window {\n  ResizeObserver: typeof ResizeObserver;\n}\n\ninterface ResizeObserverOptions {\n  /**\n   * Sets which box model the observer will observe changes to. Possible values\n   * are `content-box` (the default), and `border-box`.\n   *\n   * @default 'content-box'\n   */\n  box?: 'content-box' | 'border-box' | 'device-pixel-content-box';\n}\n\ninterface ResizeObserverSize {\n  readonly inlineSize: number;\n  readonly blockSize: number;\n}\n\ninterface ResizeObserver {\n  disconnect(): void;\n  observe(target: Element, options?: ResizeObserverOptions): void;\n  unobserve(target: Element): void;\n}\n\ndeclare var ResizeObserver: {\n  new (callback: ResizeObserverCallback): ResizeObserver;\n  prototype: ResizeObserver;\n};\n\ninterface ResizeObserverCallback {\n  (entries: ResizeObserverEntry[], observer: ResizeObserver): void;\n}\n\ninterface ResizeObserverEntry {\n  readonly target: Element;\n  readonly contentRect: DOMRectReadOnly;\n  readonly borderBoxSize: ReadonlyArray<ResizeObserverSize>;\n  readonly contentBoxSize: ReadonlyArray<ResizeObserverSize>;\n  readonly devicePixelContentBoxSize?: ReadonlyArray<ResizeObserverSize>;\n}\n\n@Directive({\n  selector: '[data-rob]',\n})\nexport class ColibriResizeObserverDirective implements OnInit, OnDestroy {\n  private resizeObserver: any;\n\n  constructor(private el: ElementRef<Element>) {}\n\n  /**\n   * initialize the ResizeObserver and set the corresponding classes\n   */\n  ngOnInit(): void {\n    this.resizeObserver = new ResizeObserver((entries) => {\n      if (entries.length) {\n        for (let entry of entries) {\n          this.setClasses(entry);\n        }\n      }\n    });\n\n    this.resizeObserver.observe(this.el.nativeElement, { box: 'border-box' });\n  }\n\n  ngOnDestroy(): void {\n    this.resizeObserver.disconnect();\n    this.resizeObserver = null;\n  }\n\n  /**\n   * Return a difference array of two arrays\n   * @param {array} arr1 - the first array.\n   * @param {array} arr2 - the second array.\n   * @return {array} the difference array of arr1 and arr2.\n   */\n  diff(arr1: Array<string>, arr2: Array<string>) {\n    return arr1\n      .filter((x) => !arr2.includes(x))\n      .concat(arr2.filter((x) => !arr1.includes(x)));\n  }\n\n  /**\n   * Adds or removes all the relevant classes depending on\n   * the size of the observed element which are defined by\n   * data-rob-{breakpoint}=\"{css classes}\"\n   * @param {ResizeObserverEntry} entry - the observed elements.\n   */\n  setClasses(entry: ResizeObserverEntry) {\n    let obj = entry.target as HTMLElement;\n\n    // ascending sorting of the breakpoints\n    // TODO: sort ascending\n    let robs = Object.entries(obj.dataset);\n\n    // let initClasses = robs[0][1].split(\" \");\n    let actualClasses = entry.target.classList.length\n      ? entry.target.classList.value.split(' ')\n      : [];\n    let activeClasses: string[] = [];\n    let diffClasses: string[] = [];\n\n    if (robs.length) {\n      for (let [key, value] of robs) {\n        // get the breakpoint of the entry: [data-rob-320]\n        const breakpoint = key.split('-')[1] ? key.split('-')[1] : '0';\n\n        /*\n         * if the width of the element is bigger than the breakpoint\n         * get the css classes of the previous and the next breakpoint\n         * and set the cssClasses to the actual values\n         */\n        if (entry.contentRect.width >= parseInt(breakpoint, 10)) {\n          // data-rob-320=\"card--small u-margin-top--2\"\n          activeClasses = value ? value.split(' ') : [];\n        }\n      }\n    }\n\n    diffClasses = this.diff(activeClasses, actualClasses);\n\n    /*\n     * if there are classes from before remove them\n     */\n    if (diffClasses.length) {\n      entry.target.classList.remove(...diffClasses);\n    }\n\n    entry.target.classList.add(...activeClasses);\n  }\n}\n\n/*\nCopyright Google LLC. All Rights Reserved.\nUse of this source code is governed by an MIT-style license that\ncan be found in the LICENSE file at https://angular.io/license\n*/\n",
+            "properties": [
+                {
+                    "name": "ResizeObserver",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 11
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 150,
+            "methods": []
+        }
+    ],
     "injectables": [],
     "classes": [
         {
@@ -41,7 +222,225 @@
             "hostListeners": []
         }
     ],
-    "directives": [],
+    "directives": [
+        {
+            "name": "ColibriResizeObserverDirective",
+            "id": "directive-ColibriResizeObserverDirective-3aeee18b2dfcbd41efaac647dac08ff9",
+            "file": "src/app/shared/directives/colibri-resize-observer/colibri-resize-observer.directive.ts",
+            "type": "directive",
+            "description": "",
+            "sourceCode": "import { Directive, ElementRef, OnDestroy, OnInit } from '@angular/core';\n\n// Type definitions for non-npm package resize-observer-browser 0.1\n// Project: https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver, https://developers.google.com/web/updates/2016/10/resizeobserver, https://wicg.github.io/ResizeObserver/\n// Definitions by: Chives <https://github.com/chivesrs>\n//                 William Furr <https://github.com/wffurr>\n//                 Alexander Shushunov <https://github.com/AlexanderShushunov>\n// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped\n\ninterface Window {\n  ResizeObserver: typeof ResizeObserver;\n}\n\ninterface ResizeObserverOptions {\n  /**\n   * Sets which box model the observer will observe changes to. Possible values\n   * are `content-box` (the default), and `border-box`.\n   *\n   * @default 'content-box'\n   */\n  box?: 'content-box' | 'border-box' | 'device-pixel-content-box';\n}\n\ninterface ResizeObserverSize {\n  readonly inlineSize: number;\n  readonly blockSize: number;\n}\n\ninterface ResizeObserver {\n  disconnect(): void;\n  observe(target: Element, options?: ResizeObserverOptions): void;\n  unobserve(target: Element): void;\n}\n\ndeclare var ResizeObserver: {\n  new (callback: ResizeObserverCallback): ResizeObserver;\n  prototype: ResizeObserver;\n};\n\ninterface ResizeObserverCallback {\n  (entries: ResizeObserverEntry[], observer: ResizeObserver): void;\n}\n\ninterface ResizeObserverEntry {\n  readonly target: Element;\n  readonly contentRect: DOMRectReadOnly;\n  readonly borderBoxSize: ReadonlyArray<ResizeObserverSize>;\n  readonly contentBoxSize: ReadonlyArray<ResizeObserverSize>;\n  readonly devicePixelContentBoxSize?: ReadonlyArray<ResizeObserverSize>;\n}\n\n@Directive({\n  selector: '[data-rob]',\n})\nexport class ColibriResizeObserverDirective implements OnInit, OnDestroy {\n  private resizeObserver: any;\n\n  constructor(private el: ElementRef<Element>) {}\n\n  /**\n   * initialize the ResizeObserver and set the corresponding classes\n   */\n  ngOnInit(): void {\n    this.resizeObserver = new ResizeObserver((entries) => {\n      if (entries.length) {\n        for (let entry of entries) {\n          this.setClasses(entry);\n        }\n      }\n    });\n\n    this.resizeObserver.observe(this.el.nativeElement, { box: 'border-box' });\n  }\n\n  ngOnDestroy(): void {\n    this.resizeObserver.disconnect();\n    this.resizeObserver = null;\n  }\n\n  /**\n   * Return a difference array of two arrays\n   * @param {array} arr1 - the first array.\n   * @param {array} arr2 - the second array.\n   * @return {array} the difference array of arr1 and arr2.\n   */\n  diff(arr1: Array<string>, arr2: Array<string>) {\n    return arr1\n      .filter((x) => !arr2.includes(x))\n      .concat(arr2.filter((x) => !arr1.includes(x)));\n  }\n\n  /**\n   * Adds or removes all the relevant classes depending on\n   * the size of the observed element which are defined by\n   * data-rob-{breakpoint}=\"{css classes}\"\n   * @param {ResizeObserverEntry} entry - the observed elements.\n   */\n  setClasses(entry: ResizeObserverEntry) {\n    let obj = entry.target as HTMLElement;\n\n    // ascending sorting of the breakpoints\n    // TODO: sort ascending\n    let robs = Object.entries(obj.dataset);\n\n    // let initClasses = robs[0][1].split(\" \");\n    let actualClasses = entry.target.classList.length\n      ? entry.target.classList.value.split(' ')\n      : [];\n    let activeClasses: string[] = [];\n    let diffClasses: string[] = [];\n\n    if (robs.length) {\n      for (let [key, value] of robs) {\n        // get the breakpoint of the entry: [data-rob-320]\n        const breakpoint = key.split('-')[1] ? key.split('-')[1] : '0';\n\n        /*\n         * if the width of the element is bigger than the breakpoint\n         * get the css classes of the previous and the next breakpoint\n         * and set the cssClasses to the actual values\n         */\n        if (entry.contentRect.width >= parseInt(breakpoint, 10)) {\n          // data-rob-320=\"card--small u-margin-top--2\"\n          activeClasses = value ? value.split(' ') : [];\n        }\n      }\n    }\n\n    diffClasses = this.diff(activeClasses, actualClasses);\n\n    /*\n     * if there are classes from before remove them\n     */\n    if (diffClasses.length) {\n      entry.target.classList.remove(...diffClasses);\n    }\n\n    entry.target.classList.add(...activeClasses);\n  }\n}\n\n/*\nCopyright Google LLC. All Rights Reserved.\nUse of this source code is governed by an MIT-style license that\ncan be found in the LICENSE file at https://angular.io/license\n*/\n",
+            "selector": "[data-rob]",
+            "providers": [],
+            "inputsClass": [],
+            "outputsClass": [],
+            "hostBindings": [],
+            "hostListeners": [],
+            "propertiesClass": [
+                {
+                    "name": "resizeObserver",
+                    "type": "any",
+                    "optional": false,
+                    "description": "",
+                    "line": 56,
+                    "modifierKind": [
+                        112
+                    ]
+                }
+            ],
+            "methodsClass": [
+                {
+                    "name": "diff",
+                    "args": [
+                        {
+                            "name": "arr1",
+                            "type": "Array<string>"
+                        },
+                        {
+                            "name": "arr2",
+                            "type": "Array<string>"
+                        }
+                    ],
+                    "optional": false,
+                    "returnType": "any",
+                    "typeParameters": [],
+                    "line": 86,
+                    "description": "<p>Return a difference array of two arrays</p>\n",
+                    "jsdoctags": [
+                        {
+                            "name": {
+                                "pos": 2456,
+                                "end": 2460,
+                                "flags": 0,
+                                "escapedText": "arr1"
+                            },
+                            "type": "Array<string>",
+                            "tagName": {
+                                "pos": 2442,
+                                "end": 2447,
+                                "flags": 0,
+                                "escapedText": "param"
+                            },
+                            "comment": "<ul>\n<li>the first array.</li>\n</ul>\n",
+                            "typeExpression": {
+                                "pos": 2448,
+                                "end": 2455,
+                                "flags": 0,
+                                "kind": 277,
+                                "type": {
+                                    "pos": 2449,
+                                    "end": 2454,
+                                    "flags": 2097152,
+                                    "kind": 161,
+                                    "typeName": {
+                                        "pos": 2449,
+                                        "end": 2454,
+                                        "flags": 2097152,
+                                        "escapedText": "array"
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "name": {
+                                "pos": 2500,
+                                "end": 2504,
+                                "flags": 0,
+                                "escapedText": "arr2"
+                            },
+                            "type": "Array<string>",
+                            "tagName": {
+                                "pos": 2486,
+                                "end": 2491,
+                                "flags": 0,
+                                "escapedText": "param"
+                            },
+                            "comment": "<ul>\n<li>the second array.</li>\n</ul>\n",
+                            "typeExpression": {
+                                "pos": 2492,
+                                "end": 2499,
+                                "flags": 0,
+                                "kind": 277,
+                                "type": {
+                                    "pos": 2493,
+                                    "end": 2498,
+                                    "flags": 2097152,
+                                    "kind": 161,
+                                    "typeName": {
+                                        "pos": 2493,
+                                        "end": 2498,
+                                        "flags": 2097152,
+                                        "escapedText": "array"
+                                    }
+                                }
+                            }
+                        },
+                        {
+                            "tagName": {
+                                "pos": 2531,
+                                "end": 2537,
+                                "flags": 0,
+                                "escapedText": "return"
+                            },
+                            "comment": "<p>the difference array of arr1 and arr2.</p>\n",
+                            "returnType": ""
+                        }
+                    ]
+                },
+                {
+                    "name": "ngOnDestroy",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 75
+                },
+                {
+                    "name": "ngOnInit",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 63,
+                    "description": "<p>initialize the ResizeObserver and set the corresponding classes</p>\n"
+                },
+                {
+                    "name": "setClasses",
+                    "args": [
+                        {
+                            "name": "entry",
+                            "type": "ResizeObserverEntry"
+                        }
+                    ],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 98,
+                    "description": "<p>Adds or removes all the relevant classes depending on\nthe size of the observed element which are defined by\ndata-rob-{breakpoint}=&quot;{css classes}&quot;</p>\n",
+                    "jsdoctags": [
+                        {
+                            "name": {
+                                "pos": 2958,
+                                "end": 2963,
+                                "flags": 0,
+                                "escapedText": "entry"
+                            },
+                            "type": "ResizeObserverEntry",
+                            "tagName": {
+                                "pos": 2930,
+                                "end": 2935,
+                                "flags": 0,
+                                "escapedText": "param"
+                            },
+                            "comment": "<ul>\n<li>the observed elements.</li>\n</ul>\n",
+                            "typeExpression": {
+                                "pos": 2936,
+                                "end": 2957,
+                                "flags": 0,
+                                "kind": 277,
+                                "type": {
+                                    "pos": 2937,
+                                    "end": 2956,
+                                    "flags": 2097152,
+                                    "kind": 161,
+                                    "typeName": {
+                                        "pos": 2937,
+                                        "end": 2956,
+                                        "flags": 2097152,
+                                        "escapedText": "ResizeObserverEntry"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            ],
+            "implements": [
+                "OnInit",
+                "OnDestroy"
+            ],
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "args": [
+                    {
+                        "name": "el",
+                        "type": "ElementRef<Element>"
+                    }
+                ],
+                "line": 56,
+                "jsdoctags": [
+                    {
+                        "name": "el",
+                        "type": "ElementRef<Element>",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
     "components": [
         {
             "name": "AppComponent",
@@ -93,7 +492,7 @@
         {
             "name": "ColibriButtonComponent",
             "id": "component-ColibriButtonComponent-5e6e9eadf038edc706b85a99f580ea5b",
-            "file": "src/app/shared/ui/button/colibri-button.component.ts",
+            "file": "src/app/shared/ui/colibri-button/colibri-button.component.ts",
             "encapsulation": [
                 "ViewEncapsulation.None"
             ],
@@ -209,6 +608,9 @@
                     "elements": [
                         {
                             "name": "AppComponent"
+                        },
+                        {
+                            "name": "ColibriResizeObserverDirective"
                         }
                     ]
                 },
@@ -322,7 +724,7 @@
                 "name": "disabled",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
-                "file": "src/app/shared/ui/button/colibri-button.stories.ts",
+                "file": "src/app/shared/ui/colibri-button/colibri-button.stories.ts",
                 "type": "",
                 "defaultValue": "template.bind({})"
             },
@@ -346,7 +748,7 @@
                 "name": "full",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
-                "file": "src/app/shared/ui/button/colibri-button.stories.ts",
+                "file": "src/app/shared/ui/colibri-button/colibri-button.stories.ts",
                 "type": "",
                 "defaultValue": "template.bind({})"
             },
@@ -354,7 +756,7 @@
                 "name": "loading",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
-                "file": "src/app/shared/ui/button/colibri-button.stories.ts",
+                "file": "src/app/shared/ui/colibri-button/colibri-button.stories.ts",
                 "type": "",
                 "defaultValue": "template.bind({})"
             },
@@ -362,7 +764,7 @@
                 "name": "primary",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
-                "file": "src/app/shared/ui/button/colibri-button.stories.ts",
+                "file": "src/app/shared/ui/colibri-button/colibri-button.stories.ts",
                 "type": "",
                 "defaultValue": "template.bind({})"
             },
@@ -374,10 +776,17 @@
                 "type": "literal type"
             },
             {
+                "name": "ResizeObserver",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/shared/directives/colibri-resize-observer/colibri-resize-observer.directive.ts",
+                "type": "literal type"
+            },
+            {
                 "name": "secondary",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
-                "file": "src/app/shared/ui/button/colibri-button.stories.ts",
+                "file": "src/app/shared/ui/colibri-button/colibri-button.stories.ts",
                 "type": "",
                 "defaultValue": "template.bind({})"
             },
@@ -385,7 +794,7 @@
                 "name": "template",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
-                "file": "src/app/shared/ui/button/colibri-button.stories.ts",
+                "file": "src/app/shared/ui/colibri-button/colibri-button.stories.ts",
                 "type": "Story<ColibriButtonComponent>",
                 "defaultValue": "(args: ColibriButtonComponent) => ({\r\n  component: ColibriButtonComponent,\r\n  props: args,\r\n})"
             }
@@ -411,12 +820,12 @@
                     "type": "literal type"
                 }
             ],
-            "src/app/shared/ui/button/colibri-button.stories.ts": [
+            "src/app/shared/ui/colibri-button/colibri-button.stories.ts": [
                 {
                     "name": "disabled",
                     "ctype": "miscellaneous",
                     "subtype": "variable",
-                    "file": "src/app/shared/ui/button/colibri-button.stories.ts",
+                    "file": "src/app/shared/ui/colibri-button/colibri-button.stories.ts",
                     "type": "",
                     "defaultValue": "template.bind({})"
                 },
@@ -424,7 +833,7 @@
                     "name": "full",
                     "ctype": "miscellaneous",
                     "subtype": "variable",
-                    "file": "src/app/shared/ui/button/colibri-button.stories.ts",
+                    "file": "src/app/shared/ui/colibri-button/colibri-button.stories.ts",
                     "type": "",
                     "defaultValue": "template.bind({})"
                 },
@@ -432,7 +841,7 @@
                     "name": "loading",
                     "ctype": "miscellaneous",
                     "subtype": "variable",
-                    "file": "src/app/shared/ui/button/colibri-button.stories.ts",
+                    "file": "src/app/shared/ui/colibri-button/colibri-button.stories.ts",
                     "type": "",
                     "defaultValue": "template.bind({})"
                 },
@@ -440,7 +849,7 @@
                     "name": "primary",
                     "ctype": "miscellaneous",
                     "subtype": "variable",
-                    "file": "src/app/shared/ui/button/colibri-button.stories.ts",
+                    "file": "src/app/shared/ui/colibri-button/colibri-button.stories.ts",
                     "type": "",
                     "defaultValue": "template.bind({})"
                 },
@@ -448,7 +857,7 @@
                     "name": "secondary",
                     "ctype": "miscellaneous",
                     "subtype": "variable",
-                    "file": "src/app/shared/ui/button/colibri-button.stories.ts",
+                    "file": "src/app/shared/ui/colibri-button/colibri-button.stories.ts",
                     "type": "",
                     "defaultValue": "template.bind({})"
                 },
@@ -456,7 +865,7 @@
                     "name": "template",
                     "ctype": "miscellaneous",
                     "subtype": "variable",
-                    "file": "src/app/shared/ui/button/colibri-button.stories.ts",
+                    "file": "src/app/shared/ui/colibri-button/colibri-button.stories.ts",
                     "type": "Story<ColibriButtonComponent>",
                     "defaultValue": "(args: ColibriButtonComponent) => ({\r\n  component: ColibriButtonComponent,\r\n  props: args,\r\n})"
                 }
@@ -480,6 +889,15 @@
                     "type": "object",
                     "defaultValue": "{\r\n  production: false\r\n}"
                 }
+            ],
+            "src/app/shared/directives/colibri-resize-observer/colibri-resize-observer.directive.ts": [
+                {
+                    "name": "ResizeObserver",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/shared/directives/colibri-resize-observer/colibri-resize-observer.directive.ts",
+                    "type": "literal type"
+                }
             ]
         },
         "groupedFunctions": {},
@@ -501,7 +919,7 @@
         ]
     },
     "coverage": {
-        "count": 6,
+        "count": 8,
         "status": "low",
         "files": [
             {
@@ -523,7 +941,71 @@
                 "status": "low"
             },
             {
-                "filePath": "src/app/shared/ui/button/colibri-button.component.ts",
+                "filePath": "src/app/shared/directives/colibri-resize-observer/colibri-resize-observer.directive.ts",
+                "type": "directive",
+                "linktype": "directive",
+                "name": "ColibriResizeObserverDirective",
+                "coveragePercent": 42,
+                "coverageCount": "3/7",
+                "status": "medium"
+            },
+            {
+                "filePath": "src/app/shared/directives/colibri-resize-observer/colibri-resize-observer.directive.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "ResizeObserverCallback",
+                "coveragePercent": 0,
+                "coverageCount": "0/2",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/shared/directives/colibri-resize-observer/colibri-resize-observer.directive.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "ResizeObserverEntry",
+                "coveragePercent": 0,
+                "coverageCount": "0/6",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/shared/directives/colibri-resize-observer/colibri-resize-observer.directive.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "ResizeObserverOptions",
+                "coveragePercent": 50,
+                "coverageCount": "1/2",
+                "status": "medium"
+            },
+            {
+                "filePath": "src/app/shared/directives/colibri-resize-observer/colibri-resize-observer.directive.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "ResizeObserverSize",
+                "coveragePercent": 0,
+                "coverageCount": "0/3",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/shared/directives/colibri-resize-observer/colibri-resize-observer.directive.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "Window",
+                "coveragePercent": 0,
+                "coverageCount": "0/2",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/shared/directives/colibri-resize-observer/colibri-resize-observer.directive.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "ResizeObserver",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/shared/ui/colibri-button/colibri-button.component.ts",
                 "type": "component",
                 "linktype": "component",
                 "name": "ColibriButtonComponent",
@@ -532,7 +1014,7 @@
                 "status": "very-good"
             },
             {
-                "filePath": "src/app/shared/ui/button/colibri-button.stories.ts",
+                "filePath": "src/app/shared/ui/colibri-button/colibri-button.stories.ts",
                 "type": "variable",
                 "linktype": "miscellaneous",
                 "linksubtype": "variable",
@@ -542,7 +1024,7 @@
                 "status": "low"
             },
             {
-                "filePath": "src/app/shared/ui/button/colibri-button.stories.ts",
+                "filePath": "src/app/shared/ui/colibri-button/colibri-button.stories.ts",
                 "type": "variable",
                 "linktype": "miscellaneous",
                 "linksubtype": "variable",
@@ -552,7 +1034,7 @@
                 "status": "low"
             },
             {
-                "filePath": "src/app/shared/ui/button/colibri-button.stories.ts",
+                "filePath": "src/app/shared/ui/colibri-button/colibri-button.stories.ts",
                 "type": "variable",
                 "linktype": "miscellaneous",
                 "linksubtype": "variable",
@@ -562,7 +1044,7 @@
                 "status": "low"
             },
             {
-                "filePath": "src/app/shared/ui/button/colibri-button.stories.ts",
+                "filePath": "src/app/shared/ui/colibri-button/colibri-button.stories.ts",
                 "type": "variable",
                 "linktype": "miscellaneous",
                 "linksubtype": "variable",
@@ -572,7 +1054,7 @@
                 "status": "low"
             },
             {
-                "filePath": "src/app/shared/ui/button/colibri-button.stories.ts",
+                "filePath": "src/app/shared/ui/colibri-button/colibri-button.stories.ts",
                 "type": "variable",
                 "linktype": "miscellaneous",
                 "linksubtype": "variable",
@@ -582,7 +1064,7 @@
                 "status": "low"
             },
             {
-                "filePath": "src/app/shared/ui/button/colibri-button.stories.ts",
+                "filePath": "src/app/shared/ui/colibri-button/colibri-button.stories.ts",
                 "type": "variable",
                 "linktype": "miscellaneous",
                 "linksubtype": "variable",

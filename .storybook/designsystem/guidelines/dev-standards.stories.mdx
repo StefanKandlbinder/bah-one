@@ -2,9 +2,10 @@ import { Meta } from "@storybook/addon-docs/blocks";
 
 <Meta title="Guidelines/Dev Standards" />
 
-> This is a component style guide created and enforced internally by the core team of bet-at-home, for the purpose of standardizing our web components.
+# Dev Standards
+> **This is a component style guide created and enforced internally by the core team of bet-at-home, for the purpose of standardizing our web components.**
 
-# File structure
+## File structure
 
 * One component per file.
 * One component per directory. Though it may make sense to group similar components into the same directory, we’ve found it’s easier to document components when each one has its own directory.
@@ -31,13 +32,12 @@ import { Meta } from "@storybook/addon-docs/blocks";
 │   ├── colibri-button-group.component.e2e.ts
 │   ├── colibri-button-group.component.stories.ts
 │   └── colibri-button-group.module.ts
-
 ```
-# Naming
+## Naming
 
-## HTML tag
+### HTML tag
 
-### Prefix
+#### Prefix
 The prefix has a major role when you are creating a collection of components intended to be used across different projects,
 like @colibri/components. Components are not scoped because they are globally declared within the webpage,
 which means an “unique” prefix is needed to prevent collisions. The prefix is also able help to quickly identify the collection
@@ -56,7 +56,7 @@ Instead, use the "colibri" prefix for all components:
 <colibri-icon>
 ```
 
-### Name
+#### Name
 Different disciplines use component names to communicate about them. Hence, they must be short, meaningful and pronounceable.
 
 * Noun rather than verb: Components are not actions, they are conceptually “things.” It is better to use nouns instead of verbs, such as “animation” instead of “animating.” “input,” “tab,” “navigation,” and “menu” are some examples.

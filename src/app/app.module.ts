@@ -3,11 +3,13 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ColibriButtonModule } from './shared/ui/button/colibri-button.module';
+import { ColibriButtonModule } from './shared/ui/colibri-button/colibri-button.module';
+import { ColibriResizeObserverDirective } from './shared/directives/colibri-resize-observer/colibri-resize-observer.directive';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    ColibriResizeObserverDirective
   ],
   imports: [
     BrowserModule,
