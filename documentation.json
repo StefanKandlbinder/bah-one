@@ -1,0 +1,1022 @@
+{
+    "pipes": [],
+    "interfaces": [
+        {
+            "name": "ResizeObserverCallback",
+            "id": "interface-ResizeObserverCallback-e9fa932dd6b960c0938a6a826d764ef4",
+            "file": "src/app/shared/directives/one-resize-observer/one-resize-observer.directive.ts",
+            "type": "interface",
+            "sourceCode": "import { Directive, ElementRef, OnDestroy, OnInit } from '@angular/core';\r\n\r\n// Type definitions for non-npm package resize-observer-browser 0.1\r\n// Project: https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver,\r\n// https://developers.google.com/web/updates/2016/10/resizeobserver,\r\n// https://wicg.github.io/ResizeObserver/\r\n// Definitions by: Chives <https://github.com/chivesrs>\r\n//                 William Furr <https://github.com/wffurr>\r\n//                 Alexander Shushunov <https://github.com/AlexanderShushunov>\r\n// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped\r\n\r\n/* tslint:disable */\r\ninterface Window {\r\n  ResizeObserver: typeof ResizeObserver;\r\n}\r\n\r\ninterface ResizeObserverOptions {\r\n  /**\r\n   * Sets which box model the observer will observe changes to. Possible values\r\n   * are `content-box` (the default), and `border-box`.\r\n   *\r\n   * @default 'content-box'\r\n   */\r\n  box?: 'content-box' | 'border-box' | 'device-pixel-content-box';\r\n}\r\n\r\ninterface ResizeObserverSize {\r\n  readonly inlineSize: number;\r\n  readonly blockSize: number;\r\n}\r\n\r\ninterface ResizeObserver {\r\n  disconnect(): void;\r\n  observe(target: Element, options?: ResizeObserverOptions): void;\r\n  unobserve(target: Element): void;\r\n}\r\n\r\ndeclare var ResizeObserver: {\r\n  new (callback: ResizeObserverCallback): ResizeObserver;\r\n  prototype: ResizeObserver;\r\n};\r\n\r\ninterface ResizeObserverCallback {\r\n  (entries: ResizeObserverEntry[], observer: ResizeObserver): void;\r\n}\r\n\r\ninterface ResizeObserverEntry {\r\n  readonly target: Element;\r\n  readonly contentRect: DOMRectReadOnly;\r\n  readonly borderBoxSize: ReadonlyArray<ResizeObserverSize>;\r\n  readonly contentBoxSize: ReadonlyArray<ResizeObserverSize>;\r\n  readonly devicePixelContentBoxSize?: ReadonlyArray<ResizeObserverSize>;\r\n}\r\n/* tslint:enable */\r\n\r\n@Directive({\r\n  /* tslint:disable */\r\n  selector: '[data-rob]',\r\n  /* tslint:enable */\r\n})\r\nexport class OneResizeObserverDirective implements OnInit, OnDestroy {\r\n  private resizeObserver: any;\r\n\r\n  constructor(private el: ElementRef<Element>) {}\r\n\r\n  /**\r\n   * initialize the ResizeObserver and set the corresponding classes\r\n   */\r\n  ngOnInit(): void {\r\n    this.resizeObserver = new ResizeObserver((entries) => {\r\n      if (entries.length) {\r\n        for (const entry of entries) {\r\n          this.setClasses(entry);\r\n        }\r\n      }\r\n    });\r\n\r\n    this.resizeObserver.observe(this.el.nativeElement, { box: 'border-box' });\r\n  }\r\n\r\n  ngOnDestroy(): void {\r\n    this.resizeObserver.disconnect();\r\n    this.resizeObserver = null;\r\n  }\r\n\r\n  /**\r\n   * Return a difference array of two arrays\r\n   */\r\n  diff(arr1: Array<string>, arr2: Array<string>): string[] {\r\n    return arr1\r\n      .filter((x) => !arr2.includes(x))\r\n      .concat(arr2.filter((x) => !arr1.includes(x)));\r\n  }\r\n\r\n  /**\r\n   * Adds or removes all the relevant classes depending on\r\n   * the size of the observed element which are defined by\r\n   * oneRob-{breakpoint}=\"{css classes}\"\r\n   */\r\n  setClasses(entry: ResizeObserverEntry): void {\r\n    const obj = entry.target as HTMLElement;\r\n\r\n    // ascending sorting of the breakpoints\r\n    // TODO: sort ascending\r\n    const robs = Object.entries(obj.dataset);\r\n\r\n    // let initClasses = robs[0][1].split(\" \");\r\n    const actualClasses = entry.target.classList.length\r\n      ? entry.target.classList.value.split(' ')\r\n      : [];\r\n    let activeClasses: string[] = [];\r\n    let diffClasses: string[] = [];\r\n\r\n    if (robs.length) {\r\n      for (const [key, value] of robs) {\r\n        // get the breakpoint of the entry: [oneRob-320]\r\n        const breakpoint = key.split('-')[1] ? key.split('-')[1] : '0';\r\n\r\n        /*\r\n         * if the width of the element is bigger than the breakpoint\r\n         * get the css classes of the previous and the next breakpoint\r\n         * and set the cssClasses to the actual values\r\n         */\r\n        if (entry.contentRect.width >= parseInt(breakpoint, 10)) {\r\n          // oneRob-320=\"card--small u-margin-top--2\"\r\n          activeClasses = value ? value.split(' ') : [];\r\n        }\r\n      }\r\n    }\r\n\r\n    diffClasses = this.diff(activeClasses, actualClasses);\r\n\r\n    /*\r\n     * if there are classes from before remove them\r\n     */\r\n    if (diffClasses.length) {\r\n      entry.target.classList.remove(...diffClasses);\r\n    }\r\n\r\n    entry.target.classList.add(...activeClasses);\r\n  }\r\n}\r\n\r\n/*\r\nCopyright Google LLC. All Rights Reserved.\r\nUse of this source code is governed by an MIT-style license that\r\ncan be found in the LICENSE file at https://angular.io/license\r\n*/\r\n",
+            "properties": [
+                {
+                    "id": "call-declaration-e9fa932dd6b960c0938a6a826d764ef4",
+                    "args": [
+                        {
+                            "name": "entries",
+                            "type": "ResizeObserverEntry[]"
+                        },
+                        {
+                            "name": "observer",
+                            "type": "ResizeObserver"
+                        }
+                    ],
+                    "returnType": "void",
+                    "line": 43
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 157,
+            "methods": []
+        },
+        {
+            "name": "ResizeObserverEntry",
+            "id": "interface-ResizeObserverEntry-e9fa932dd6b960c0938a6a826d764ef4",
+            "file": "src/app/shared/directives/one-resize-observer/one-resize-observer.directive.ts",
+            "type": "interface",
+            "sourceCode": "import { Directive, ElementRef, OnDestroy, OnInit } from '@angular/core';\r\n\r\n// Type definitions for non-npm package resize-observer-browser 0.1\r\n// Project: https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver,\r\n// https://developers.google.com/web/updates/2016/10/resizeobserver,\r\n// https://wicg.github.io/ResizeObserver/\r\n// Definitions by: Chives <https://github.com/chivesrs>\r\n//                 William Furr <https://github.com/wffurr>\r\n//                 Alexander Shushunov <https://github.com/AlexanderShushunov>\r\n// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped\r\n\r\n/* tslint:disable */\r\ninterface Window {\r\n  ResizeObserver: typeof ResizeObserver;\r\n}\r\n\r\ninterface ResizeObserverOptions {\r\n  /**\r\n   * Sets which box model the observer will observe changes to. Possible values\r\n   * are `content-box` (the default), and `border-box`.\r\n   *\r\n   * @default 'content-box'\r\n   */\r\n  box?: 'content-box' | 'border-box' | 'device-pixel-content-box';\r\n}\r\n\r\ninterface ResizeObserverSize {\r\n  readonly inlineSize: number;\r\n  readonly blockSize: number;\r\n}\r\n\r\ninterface ResizeObserver {\r\n  disconnect(): void;\r\n  observe(target: Element, options?: ResizeObserverOptions): void;\r\n  unobserve(target: Element): void;\r\n}\r\n\r\ndeclare var ResizeObserver: {\r\n  new (callback: ResizeObserverCallback): ResizeObserver;\r\n  prototype: ResizeObserver;\r\n};\r\n\r\ninterface ResizeObserverCallback {\r\n  (entries: ResizeObserverEntry[], observer: ResizeObserver): void;\r\n}\r\n\r\ninterface ResizeObserverEntry {\r\n  readonly target: Element;\r\n  readonly contentRect: DOMRectReadOnly;\r\n  readonly borderBoxSize: ReadonlyArray<ResizeObserverSize>;\r\n  readonly contentBoxSize: ReadonlyArray<ResizeObserverSize>;\r\n  readonly devicePixelContentBoxSize?: ReadonlyArray<ResizeObserverSize>;\r\n}\r\n/* tslint:enable */\r\n\r\n@Directive({\r\n  /* tslint:disable */\r\n  selector: '[data-rob]',\r\n  /* tslint:enable */\r\n})\r\nexport class OneResizeObserverDirective implements OnInit, OnDestroy {\r\n  private resizeObserver: any;\r\n\r\n  constructor(private el: ElementRef<Element>) {}\r\n\r\n  /**\r\n   * initialize the ResizeObserver and set the corresponding classes\r\n   */\r\n  ngOnInit(): void {\r\n    this.resizeObserver = new ResizeObserver((entries) => {\r\n      if (entries.length) {\r\n        for (const entry of entries) {\r\n          this.setClasses(entry);\r\n        }\r\n      }\r\n    });\r\n\r\n    this.resizeObserver.observe(this.el.nativeElement, { box: 'border-box' });\r\n  }\r\n\r\n  ngOnDestroy(): void {\r\n    this.resizeObserver.disconnect();\r\n    this.resizeObserver = null;\r\n  }\r\n\r\n  /**\r\n   * Return a difference array of two arrays\r\n   */\r\n  diff(arr1: Array<string>, arr2: Array<string>): string[] {\r\n    return arr1\r\n      .filter((x) => !arr2.includes(x))\r\n      .concat(arr2.filter((x) => !arr1.includes(x)));\r\n  }\r\n\r\n  /**\r\n   * Adds or removes all the relevant classes depending on\r\n   * the size of the observed element which are defined by\r\n   * oneRob-{breakpoint}=\"{css classes}\"\r\n   */\r\n  setClasses(entry: ResizeObserverEntry): void {\r\n    const obj = entry.target as HTMLElement;\r\n\r\n    // ascending sorting of the breakpoints\r\n    // TODO: sort ascending\r\n    const robs = Object.entries(obj.dataset);\r\n\r\n    // let initClasses = robs[0][1].split(\" \");\r\n    const actualClasses = entry.target.classList.length\r\n      ? entry.target.classList.value.split(' ')\r\n      : [];\r\n    let activeClasses: string[] = [];\r\n    let diffClasses: string[] = [];\r\n\r\n    if (robs.length) {\r\n      for (const [key, value] of robs) {\r\n        // get the breakpoint of the entry: [oneRob-320]\r\n        const breakpoint = key.split('-')[1] ? key.split('-')[1] : '0';\r\n\r\n        /*\r\n         * if the width of the element is bigger than the breakpoint\r\n         * get the css classes of the previous and the next breakpoint\r\n         * and set the cssClasses to the actual values\r\n         */\r\n        if (entry.contentRect.width >= parseInt(breakpoint, 10)) {\r\n          // oneRob-320=\"card--small u-margin-top--2\"\r\n          activeClasses = value ? value.split(' ') : [];\r\n        }\r\n      }\r\n    }\r\n\r\n    diffClasses = this.diff(activeClasses, actualClasses);\r\n\r\n    /*\r\n     * if there are classes from before remove them\r\n     */\r\n    if (diffClasses.length) {\r\n      entry.target.classList.remove(...diffClasses);\r\n    }\r\n\r\n    entry.target.classList.add(...activeClasses);\r\n  }\r\n}\r\n\r\n/*\r\nCopyright Google LLC. All Rights Reserved.\r\nUse of this source code is governed by an MIT-style license that\r\ncan be found in the LICENSE file at https://angular.io/license\r\n*/\r\n",
+            "properties": [
+                {
+                    "name": "borderBoxSize",
+                    "type": "ReadonlyArray<ResizeObserverSize>",
+                    "optional": false,
+                    "description": "",
+                    "line": 50,
+                    "modifierKind": [
+                        132
+                    ]
+                },
+                {
+                    "name": "contentBoxSize",
+                    "type": "ReadonlyArray<ResizeObserverSize>",
+                    "optional": false,
+                    "description": "",
+                    "line": 51,
+                    "modifierKind": [
+                        132
+                    ]
+                },
+                {
+                    "name": "contentRect",
+                    "type": "DOMRectReadOnly",
+                    "optional": false,
+                    "description": "",
+                    "line": 49,
+                    "modifierKind": [
+                        132
+                    ]
+                },
+                {
+                    "name": "devicePixelContentBoxSize",
+                    "type": "ReadonlyArray<ResizeObserverSize>",
+                    "optional": true,
+                    "description": "",
+                    "line": 52,
+                    "modifierKind": [
+                        132
+                    ]
+                },
+                {
+                    "name": "target",
+                    "type": "Element",
+                    "optional": false,
+                    "description": "",
+                    "line": 48,
+                    "modifierKind": [
+                        132
+                    ]
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 150,
+            "methods": []
+        },
+        {
+            "name": "ResizeObserverOptions",
+            "id": "interface-ResizeObserverOptions-e9fa932dd6b960c0938a6a826d764ef4",
+            "file": "src/app/shared/directives/one-resize-observer/one-resize-observer.directive.ts",
+            "type": "interface",
+            "sourceCode": "import { Directive, ElementRef, OnDestroy, OnInit } from '@angular/core';\r\n\r\n// Type definitions for non-npm package resize-observer-browser 0.1\r\n// Project: https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver,\r\n// https://developers.google.com/web/updates/2016/10/resizeobserver,\r\n// https://wicg.github.io/ResizeObserver/\r\n// Definitions by: Chives <https://github.com/chivesrs>\r\n//                 William Furr <https://github.com/wffurr>\r\n//                 Alexander Shushunov <https://github.com/AlexanderShushunov>\r\n// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped\r\n\r\n/* tslint:disable */\r\ninterface Window {\r\n  ResizeObserver: typeof ResizeObserver;\r\n}\r\n\r\ninterface ResizeObserverOptions {\r\n  /**\r\n   * Sets which box model the observer will observe changes to. Possible values\r\n   * are `content-box` (the default), and `border-box`.\r\n   *\r\n   * @default 'content-box'\r\n   */\r\n  box?: 'content-box' | 'border-box' | 'device-pixel-content-box';\r\n}\r\n\r\ninterface ResizeObserverSize {\r\n  readonly inlineSize: number;\r\n  readonly blockSize: number;\r\n}\r\n\r\ninterface ResizeObserver {\r\n  disconnect(): void;\r\n  observe(target: Element, options?: ResizeObserverOptions): void;\r\n  unobserve(target: Element): void;\r\n}\r\n\r\ndeclare var ResizeObserver: {\r\n  new (callback: ResizeObserverCallback): ResizeObserver;\r\n  prototype: ResizeObserver;\r\n};\r\n\r\ninterface ResizeObserverCallback {\r\n  (entries: ResizeObserverEntry[], observer: ResizeObserver): void;\r\n}\r\n\r\ninterface ResizeObserverEntry {\r\n  readonly target: Element;\r\n  readonly contentRect: DOMRectReadOnly;\r\n  readonly borderBoxSize: ReadonlyArray<ResizeObserverSize>;\r\n  readonly contentBoxSize: ReadonlyArray<ResizeObserverSize>;\r\n  readonly devicePixelContentBoxSize?: ReadonlyArray<ResizeObserverSize>;\r\n}\r\n/* tslint:enable */\r\n\r\n@Directive({\r\n  /* tslint:disable */\r\n  selector: '[data-rob]',\r\n  /* tslint:enable */\r\n})\r\nexport class OneResizeObserverDirective implements OnInit, OnDestroy {\r\n  private resizeObserver: any;\r\n\r\n  constructor(private el: ElementRef<Element>) {}\r\n\r\n  /**\r\n   * initialize the ResizeObserver and set the corresponding classes\r\n   */\r\n  ngOnInit(): void {\r\n    this.resizeObserver = new ResizeObserver((entries) => {\r\n      if (entries.length) {\r\n        for (const entry of entries) {\r\n          this.setClasses(entry);\r\n        }\r\n      }\r\n    });\r\n\r\n    this.resizeObserver.observe(this.el.nativeElement, { box: 'border-box' });\r\n  }\r\n\r\n  ngOnDestroy(): void {\r\n    this.resizeObserver.disconnect();\r\n    this.resizeObserver = null;\r\n  }\r\n\r\n  /**\r\n   * Return a difference array of two arrays\r\n   */\r\n  diff(arr1: Array<string>, arr2: Array<string>): string[] {\r\n    return arr1\r\n      .filter((x) => !arr2.includes(x))\r\n      .concat(arr2.filter((x) => !arr1.includes(x)));\r\n  }\r\n\r\n  /**\r\n   * Adds or removes all the relevant classes depending on\r\n   * the size of the observed element which are defined by\r\n   * oneRob-{breakpoint}=\"{css classes}\"\r\n   */\r\n  setClasses(entry: ResizeObserverEntry): void {\r\n    const obj = entry.target as HTMLElement;\r\n\r\n    // ascending sorting of the breakpoints\r\n    // TODO: sort ascending\r\n    const robs = Object.entries(obj.dataset);\r\n\r\n    // let initClasses = robs[0][1].split(\" \");\r\n    const actualClasses = entry.target.classList.length\r\n      ? entry.target.classList.value.split(' ')\r\n      : [];\r\n    let activeClasses: string[] = [];\r\n    let diffClasses: string[] = [];\r\n\r\n    if (robs.length) {\r\n      for (const [key, value] of robs) {\r\n        // get the breakpoint of the entry: [oneRob-320]\r\n        const breakpoint = key.split('-')[1] ? key.split('-')[1] : '0';\r\n\r\n        /*\r\n         * if the width of the element is bigger than the breakpoint\r\n         * get the css classes of the previous and the next breakpoint\r\n         * and set the cssClasses to the actual values\r\n         */\r\n        if (entry.contentRect.width >= parseInt(breakpoint, 10)) {\r\n          // oneRob-320=\"card--small u-margin-top--2\"\r\n          activeClasses = value ? value.split(' ') : [];\r\n        }\r\n      }\r\n    }\r\n\r\n    diffClasses = this.diff(activeClasses, actualClasses);\r\n\r\n    /*\r\n     * if there are classes from before remove them\r\n     */\r\n    if (diffClasses.length) {\r\n      entry.target.classList.remove(...diffClasses);\r\n    }\r\n\r\n    entry.target.classList.add(...activeClasses);\r\n  }\r\n}\r\n\r\n/*\r\nCopyright Google LLC. All Rights Reserved.\r\nUse of this source code is governed by an MIT-style license that\r\ncan be found in the LICENSE file at https://angular.io/license\r\n*/\r\n",
+            "properties": [
+                {
+                    "name": "box",
+                    "type": "\"content-box\" | \"border-box\" | \"device-pixel-content-box\"",
+                    "optional": true,
+                    "description": "<p>Sets which box model the observer will observe changes to. Possible values\nare <code>content-box</code> (the default), and <code>border-box</code>.</p>\n",
+                    "line": 24,
+                    "jsdoctags": [
+                        {
+                            "pos": 885,
+                            "end": 894,
+                            "flags": 0,
+                            "kind": 288,
+                            "atToken": {
+                                "pos": 885,
+                                "end": 886,
+                                "flags": 0,
+                                "kind": 57
+                            },
+                            "tagName": {
+                                "pos": 886,
+                                "end": 893,
+                                "flags": 0,
+                                "escapedText": "default"
+                            },
+                            "comment": "<p>&#39;content-box&#39;</p>\n"
+                        }
+                    ]
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 150,
+            "methods": []
+        },
+        {
+            "name": "ResizeObserverSize",
+            "id": "interface-ResizeObserverSize-e9fa932dd6b960c0938a6a826d764ef4",
+            "file": "src/app/shared/directives/one-resize-observer/one-resize-observer.directive.ts",
+            "type": "interface",
+            "sourceCode": "import { Directive, ElementRef, OnDestroy, OnInit } from '@angular/core';\r\n\r\n// Type definitions for non-npm package resize-observer-browser 0.1\r\n// Project: https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver,\r\n// https://developers.google.com/web/updates/2016/10/resizeobserver,\r\n// https://wicg.github.io/ResizeObserver/\r\n// Definitions by: Chives <https://github.com/chivesrs>\r\n//                 William Furr <https://github.com/wffurr>\r\n//                 Alexander Shushunov <https://github.com/AlexanderShushunov>\r\n// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped\r\n\r\n/* tslint:disable */\r\ninterface Window {\r\n  ResizeObserver: typeof ResizeObserver;\r\n}\r\n\r\ninterface ResizeObserverOptions {\r\n  /**\r\n   * Sets which box model the observer will observe changes to. Possible values\r\n   * are `content-box` (the default), and `border-box`.\r\n   *\r\n   * @default 'content-box'\r\n   */\r\n  box?: 'content-box' | 'border-box' | 'device-pixel-content-box';\r\n}\r\n\r\ninterface ResizeObserverSize {\r\n  readonly inlineSize: number;\r\n  readonly blockSize: number;\r\n}\r\n\r\ninterface ResizeObserver {\r\n  disconnect(): void;\r\n  observe(target: Element, options?: ResizeObserverOptions): void;\r\n  unobserve(target: Element): void;\r\n}\r\n\r\ndeclare var ResizeObserver: {\r\n  new (callback: ResizeObserverCallback): ResizeObserver;\r\n  prototype: ResizeObserver;\r\n};\r\n\r\ninterface ResizeObserverCallback {\r\n  (entries: ResizeObserverEntry[], observer: ResizeObserver): void;\r\n}\r\n\r\ninterface ResizeObserverEntry {\r\n  readonly target: Element;\r\n  readonly contentRect: DOMRectReadOnly;\r\n  readonly borderBoxSize: ReadonlyArray<ResizeObserverSize>;\r\n  readonly contentBoxSize: ReadonlyArray<ResizeObserverSize>;\r\n  readonly devicePixelContentBoxSize?: ReadonlyArray<ResizeObserverSize>;\r\n}\r\n/* tslint:enable */\r\n\r\n@Directive({\r\n  /* tslint:disable */\r\n  selector: '[data-rob]',\r\n  /* tslint:enable */\r\n})\r\nexport class OneResizeObserverDirective implements OnInit, OnDestroy {\r\n  private resizeObserver: any;\r\n\r\n  constructor(private el: ElementRef<Element>) {}\r\n\r\n  /**\r\n   * initialize the ResizeObserver and set the corresponding classes\r\n   */\r\n  ngOnInit(): void {\r\n    this.resizeObserver = new ResizeObserver((entries) => {\r\n      if (entries.length) {\r\n        for (const entry of entries) {\r\n          this.setClasses(entry);\r\n        }\r\n      }\r\n    });\r\n\r\n    this.resizeObserver.observe(this.el.nativeElement, { box: 'border-box' });\r\n  }\r\n\r\n  ngOnDestroy(): void {\r\n    this.resizeObserver.disconnect();\r\n    this.resizeObserver = null;\r\n  }\r\n\r\n  /**\r\n   * Return a difference array of two arrays\r\n   */\r\n  diff(arr1: Array<string>, arr2: Array<string>): string[] {\r\n    return arr1\r\n      .filter((x) => !arr2.includes(x))\r\n      .concat(arr2.filter((x) => !arr1.includes(x)));\r\n  }\r\n\r\n  /**\r\n   * Adds or removes all the relevant classes depending on\r\n   * the size of the observed element which are defined by\r\n   * oneRob-{breakpoint}=\"{css classes}\"\r\n   */\r\n  setClasses(entry: ResizeObserverEntry): void {\r\n    const obj = entry.target as HTMLElement;\r\n\r\n    // ascending sorting of the breakpoints\r\n    // TODO: sort ascending\r\n    const robs = Object.entries(obj.dataset);\r\n\r\n    // let initClasses = robs[0][1].split(\" \");\r\n    const actualClasses = entry.target.classList.length\r\n      ? entry.target.classList.value.split(' ')\r\n      : [];\r\n    let activeClasses: string[] = [];\r\n    let diffClasses: string[] = [];\r\n\r\n    if (robs.length) {\r\n      for (const [key, value] of robs) {\r\n        // get the breakpoint of the entry: [oneRob-320]\r\n        const breakpoint = key.split('-')[1] ? key.split('-')[1] : '0';\r\n\r\n        /*\r\n         * if the width of the element is bigger than the breakpoint\r\n         * get the css classes of the previous and the next breakpoint\r\n         * and set the cssClasses to the actual values\r\n         */\r\n        if (entry.contentRect.width >= parseInt(breakpoint, 10)) {\r\n          // oneRob-320=\"card--small u-margin-top--2\"\r\n          activeClasses = value ? value.split(' ') : [];\r\n        }\r\n      }\r\n    }\r\n\r\n    diffClasses = this.diff(activeClasses, actualClasses);\r\n\r\n    /*\r\n     * if there are classes from before remove them\r\n     */\r\n    if (diffClasses.length) {\r\n      entry.target.classList.remove(...diffClasses);\r\n    }\r\n\r\n    entry.target.classList.add(...activeClasses);\r\n  }\r\n}\r\n\r\n/*\r\nCopyright Google LLC. All Rights Reserved.\r\nUse of this source code is governed by an MIT-style license that\r\ncan be found in the LICENSE file at https://angular.io/license\r\n*/\r\n",
+            "properties": [
+                {
+                    "name": "blockSize",
+                    "type": "number",
+                    "optional": false,
+                    "description": "",
+                    "line": 29,
+                    "modifierKind": [
+                        132
+                    ]
+                },
+                {
+                    "name": "inlineSize",
+                    "type": "number",
+                    "optional": false,
+                    "description": "",
+                    "line": 28,
+                    "modifierKind": [
+                        132
+                    ]
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 150,
+            "methods": []
+        },
+        {
+            "name": "Window",
+            "id": "interface-Window-e9fa932dd6b960c0938a6a826d764ef4",
+            "file": "src/app/shared/directives/one-resize-observer/one-resize-observer.directive.ts",
+            "type": "interface",
+            "sourceCode": "import { Directive, ElementRef, OnDestroy, OnInit } from '@angular/core';\r\n\r\n// Type definitions for non-npm package resize-observer-browser 0.1\r\n// Project: https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver,\r\n// https://developers.google.com/web/updates/2016/10/resizeobserver,\r\n// https://wicg.github.io/ResizeObserver/\r\n// Definitions by: Chives <https://github.com/chivesrs>\r\n//                 William Furr <https://github.com/wffurr>\r\n//                 Alexander Shushunov <https://github.com/AlexanderShushunov>\r\n// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped\r\n\r\n/* tslint:disable */\r\ninterface Window {\r\n  ResizeObserver: typeof ResizeObserver;\r\n}\r\n\r\ninterface ResizeObserverOptions {\r\n  /**\r\n   * Sets which box model the observer will observe changes to. Possible values\r\n   * are `content-box` (the default), and `border-box`.\r\n   *\r\n   * @default 'content-box'\r\n   */\r\n  box?: 'content-box' | 'border-box' | 'device-pixel-content-box';\r\n}\r\n\r\ninterface ResizeObserverSize {\r\n  readonly inlineSize: number;\r\n  readonly blockSize: number;\r\n}\r\n\r\ninterface ResizeObserver {\r\n  disconnect(): void;\r\n  observe(target: Element, options?: ResizeObserverOptions): void;\r\n  unobserve(target: Element): void;\r\n}\r\n\r\ndeclare var ResizeObserver: {\r\n  new (callback: ResizeObserverCallback): ResizeObserver;\r\n  prototype: ResizeObserver;\r\n};\r\n\r\ninterface ResizeObserverCallback {\r\n  (entries: ResizeObserverEntry[], observer: ResizeObserver): void;\r\n}\r\n\r\ninterface ResizeObserverEntry {\r\n  readonly target: Element;\r\n  readonly contentRect: DOMRectReadOnly;\r\n  readonly borderBoxSize: ReadonlyArray<ResizeObserverSize>;\r\n  readonly contentBoxSize: ReadonlyArray<ResizeObserverSize>;\r\n  readonly devicePixelContentBoxSize?: ReadonlyArray<ResizeObserverSize>;\r\n}\r\n/* tslint:enable */\r\n\r\n@Directive({\r\n  /* tslint:disable */\r\n  selector: '[data-rob]',\r\n  /* tslint:enable */\r\n})\r\nexport class OneResizeObserverDirective implements OnInit, OnDestroy {\r\n  private resizeObserver: any;\r\n\r\n  constructor(private el: ElementRef<Element>) {}\r\n\r\n  /**\r\n   * initialize the ResizeObserver and set the corresponding classes\r\n   */\r\n  ngOnInit(): void {\r\n    this.resizeObserver = new ResizeObserver((entries) => {\r\n      if (entries.length) {\r\n        for (const entry of entries) {\r\n          this.setClasses(entry);\r\n        }\r\n      }\r\n    });\r\n\r\n    this.resizeObserver.observe(this.el.nativeElement, { box: 'border-box' });\r\n  }\r\n\r\n  ngOnDestroy(): void {\r\n    this.resizeObserver.disconnect();\r\n    this.resizeObserver = null;\r\n  }\r\n\r\n  /**\r\n   * Return a difference array of two arrays\r\n   */\r\n  diff(arr1: Array<string>, arr2: Array<string>): string[] {\r\n    return arr1\r\n      .filter((x) => !arr2.includes(x))\r\n      .concat(arr2.filter((x) => !arr1.includes(x)));\r\n  }\r\n\r\n  /**\r\n   * Adds or removes all the relevant classes depending on\r\n   * the size of the observed element which are defined by\r\n   * oneRob-{breakpoint}=\"{css classes}\"\r\n   */\r\n  setClasses(entry: ResizeObserverEntry): void {\r\n    const obj = entry.target as HTMLElement;\r\n\r\n    // ascending sorting of the breakpoints\r\n    // TODO: sort ascending\r\n    const robs = Object.entries(obj.dataset);\r\n\r\n    // let initClasses = robs[0][1].split(\" \");\r\n    const actualClasses = entry.target.classList.length\r\n      ? entry.target.classList.value.split(' ')\r\n      : [];\r\n    let activeClasses: string[] = [];\r\n    let diffClasses: string[] = [];\r\n\r\n    if (robs.length) {\r\n      for (const [key, value] of robs) {\r\n        // get the breakpoint of the entry: [oneRob-320]\r\n        const breakpoint = key.split('-')[1] ? key.split('-')[1] : '0';\r\n\r\n        /*\r\n         * if the width of the element is bigger than the breakpoint\r\n         * get the css classes of the previous and the next breakpoint\r\n         * and set the cssClasses to the actual values\r\n         */\r\n        if (entry.contentRect.width >= parseInt(breakpoint, 10)) {\r\n          // oneRob-320=\"card--small u-margin-top--2\"\r\n          activeClasses = value ? value.split(' ') : [];\r\n        }\r\n      }\r\n    }\r\n\r\n    diffClasses = this.diff(activeClasses, actualClasses);\r\n\r\n    /*\r\n     * if there are classes from before remove them\r\n     */\r\n    if (diffClasses.length) {\r\n      entry.target.classList.remove(...diffClasses);\r\n    }\r\n\r\n    entry.target.classList.add(...activeClasses);\r\n  }\r\n}\r\n\r\n/*\r\nCopyright Google LLC. All Rights Reserved.\r\nUse of this source code is governed by an MIT-style license that\r\ncan be found in the LICENSE file at https://angular.io/license\r\n*/\r\n",
+            "properties": [
+                {
+                    "name": "ResizeObserver",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 14
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 150,
+            "methods": []
+        }
+    ],
+    "injectables": [],
+    "classes": [
+        {
+            "name": "AppPage",
+            "id": "class-AppPage-e3ea1f4631d62652a5623d3ab757b2fc",
+            "file": "e2e/src/app.po.ts",
+            "type": "class",
+            "sourceCode": "import { browser, by, element } from 'protractor';\r\n\r\nexport class AppPage {\r\n  async navigateTo(): Promise<unknown> {\r\n    return browser.get(browser.baseUrl);\r\n  }\r\n\r\n  async getTitleText(): Promise<string> {\r\n    return element(by.css('app-root .content span')).getText();\r\n  }\r\n}\r\n",
+            "properties": [],
+            "methods": [
+                {
+                    "name": "getTitleText",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "Promise<string>",
+                    "typeParameters": [],
+                    "line": 8,
+                    "modifierKind": [
+                        120
+                    ]
+                },
+                {
+                    "name": "navigateTo",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "Promise<unknown>",
+                    "typeParameters": [],
+                    "line": 4,
+                    "modifierKind": [
+                        120
+                    ]
+                }
+            ],
+            "indexSignatures": [],
+            "inputsClass": [],
+            "outputsClass": [],
+            "hostBindings": [],
+            "hostListeners": []
+        }
+    ],
+    "directives": [
+        {
+            "name": "OneResizeObserverDirective",
+            "id": "directive-OneResizeObserverDirective-e9fa932dd6b960c0938a6a826d764ef4",
+            "file": "src/app/shared/directives/one-resize-observer/one-resize-observer.directive.ts",
+            "type": "directive",
+            "description": "",
+            "sourceCode": "import { Directive, ElementRef, OnDestroy, OnInit } from '@angular/core';\r\n\r\n// Type definitions for non-npm package resize-observer-browser 0.1\r\n// Project: https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver,\r\n// https://developers.google.com/web/updates/2016/10/resizeobserver,\r\n// https://wicg.github.io/ResizeObserver/\r\n// Definitions by: Chives <https://github.com/chivesrs>\r\n//                 William Furr <https://github.com/wffurr>\r\n//                 Alexander Shushunov <https://github.com/AlexanderShushunov>\r\n// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped\r\n\r\n/* tslint:disable */\r\ninterface Window {\r\n  ResizeObserver: typeof ResizeObserver;\r\n}\r\n\r\ninterface ResizeObserverOptions {\r\n  /**\r\n   * Sets which box model the observer will observe changes to. Possible values\r\n   * are `content-box` (the default), and `border-box`.\r\n   *\r\n   * @default 'content-box'\r\n   */\r\n  box?: 'content-box' | 'border-box' | 'device-pixel-content-box';\r\n}\r\n\r\ninterface ResizeObserverSize {\r\n  readonly inlineSize: number;\r\n  readonly blockSize: number;\r\n}\r\n\r\ninterface ResizeObserver {\r\n  disconnect(): void;\r\n  observe(target: Element, options?: ResizeObserverOptions): void;\r\n  unobserve(target: Element): void;\r\n}\r\n\r\ndeclare var ResizeObserver: {\r\n  new (callback: ResizeObserverCallback): ResizeObserver;\r\n  prototype: ResizeObserver;\r\n};\r\n\r\ninterface ResizeObserverCallback {\r\n  (entries: ResizeObserverEntry[], observer: ResizeObserver): void;\r\n}\r\n\r\ninterface ResizeObserverEntry {\r\n  readonly target: Element;\r\n  readonly contentRect: DOMRectReadOnly;\r\n  readonly borderBoxSize: ReadonlyArray<ResizeObserverSize>;\r\n  readonly contentBoxSize: ReadonlyArray<ResizeObserverSize>;\r\n  readonly devicePixelContentBoxSize?: ReadonlyArray<ResizeObserverSize>;\r\n}\r\n/* tslint:enable */\r\n\r\n@Directive({\r\n  /* tslint:disable */\r\n  selector: '[data-rob]',\r\n  /* tslint:enable */\r\n})\r\nexport class OneResizeObserverDirective implements OnInit, OnDestroy {\r\n  private resizeObserver: any;\r\n\r\n  constructor(private el: ElementRef<Element>) {}\r\n\r\n  /**\r\n   * initialize the ResizeObserver and set the corresponding classes\r\n   */\r\n  ngOnInit(): void {\r\n    this.resizeObserver = new ResizeObserver((entries) => {\r\n      if (entries.length) {\r\n        for (const entry of entries) {\r\n          this.setClasses(entry);\r\n        }\r\n      }\r\n    });\r\n\r\n    this.resizeObserver.observe(this.el.nativeElement, { box: 'border-box' });\r\n  }\r\n\r\n  ngOnDestroy(): void {\r\n    this.resizeObserver.disconnect();\r\n    this.resizeObserver = null;\r\n  }\r\n\r\n  /**\r\n   * Return a difference array of two arrays\r\n   */\r\n  diff(arr1: Array<string>, arr2: Array<string>): string[] {\r\n    return arr1\r\n      .filter((x) => !arr2.includes(x))\r\n      .concat(arr2.filter((x) => !arr1.includes(x)));\r\n  }\r\n\r\n  /**\r\n   * Adds or removes all the relevant classes depending on\r\n   * the size of the observed element which are defined by\r\n   * oneRob-{breakpoint}=\"{css classes}\"\r\n   */\r\n  setClasses(entry: ResizeObserverEntry): void {\r\n    const obj = entry.target as HTMLElement;\r\n\r\n    // ascending sorting of the breakpoints\r\n    // TODO: sort ascending\r\n    const robs = Object.entries(obj.dataset);\r\n\r\n    // let initClasses = robs[0][1].split(\" \");\r\n    const actualClasses = entry.target.classList.length\r\n      ? entry.target.classList.value.split(' ')\r\n      : [];\r\n    let activeClasses: string[] = [];\r\n    let diffClasses: string[] = [];\r\n\r\n    if (robs.length) {\r\n      for (const [key, value] of robs) {\r\n        // get the breakpoint of the entry: [oneRob-320]\r\n        const breakpoint = key.split('-')[1] ? key.split('-')[1] : '0';\r\n\r\n        /*\r\n         * if the width of the element is bigger than the breakpoint\r\n         * get the css classes of the previous and the next breakpoint\r\n         * and set the cssClasses to the actual values\r\n         */\r\n        if (entry.contentRect.width >= parseInt(breakpoint, 10)) {\r\n          // oneRob-320=\"card--small u-margin-top--2\"\r\n          activeClasses = value ? value.split(' ') : [];\r\n        }\r\n      }\r\n    }\r\n\r\n    diffClasses = this.diff(activeClasses, actualClasses);\r\n\r\n    /*\r\n     * if there are classes from before remove them\r\n     */\r\n    if (diffClasses.length) {\r\n      entry.target.classList.remove(...diffClasses);\r\n    }\r\n\r\n    entry.target.classList.add(...activeClasses);\r\n  }\r\n}\r\n\r\n/*\r\nCopyright Google LLC. All Rights Reserved.\r\nUse of this source code is governed by an MIT-style license that\r\ncan be found in the LICENSE file at https://angular.io/license\r\n*/\r\n",
+            "selector": "[data-rob]",
+            "providers": [],
+            "inputsClass": [],
+            "outputsClass": [],
+            "hostBindings": [],
+            "hostListeners": [],
+            "propertiesClass": [
+                {
+                    "name": "resizeObserver",
+                    "type": "any",
+                    "optional": false,
+                    "description": "",
+                    "line": 62,
+                    "modifierKind": [
+                        112
+                    ]
+                }
+            ],
+            "methodsClass": [
+                {
+                    "name": "diff",
+                    "args": [
+                        {
+                            "name": "arr1",
+                            "type": "Array<string>"
+                        },
+                        {
+                            "name": "arr2",
+                            "type": "Array<string>"
+                        }
+                    ],
+                    "optional": false,
+                    "returnType": "string[]",
+                    "typeParameters": [],
+                    "line": 89,
+                    "description": "<p>Return a difference array of two arrays</p>\n",
+                    "jsdoctags": [
+                        {
+                            "name": "arr1",
+                            "type": "Array<string>",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        },
+                        {
+                            "name": "arr2",
+                            "type": "Array<string>",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "ngOnDestroy",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 81
+                },
+                {
+                    "name": "ngOnInit",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 69,
+                    "description": "<p>initialize the ResizeObserver and set the corresponding classes</p>\n"
+                },
+                {
+                    "name": "setClasses",
+                    "args": [
+                        {
+                            "name": "entry",
+                            "type": "ResizeObserverEntry"
+                        }
+                    ],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 100,
+                    "description": "<p>Adds or removes all the relevant classes depending on\nthe size of the observed element which are defined by\noneRob-{breakpoint}=&quot;{css classes}&quot;</p>\n",
+                    "jsdoctags": [
+                        {
+                            "name": "entry",
+                            "type": "ResizeObserverEntry",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "implements": [
+                "OnInit",
+                "OnDestroy"
+            ],
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "args": [
+                    {
+                        "name": "el",
+                        "type": "ElementRef<Element>"
+                    }
+                ],
+                "line": 62,
+                "jsdoctags": [
+                    {
+                        "name": "el",
+                        "type": "ElementRef<Element>",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "components": [
+        {
+            "name": "AppComponent",
+            "id": "component-AppComponent-0267924b9141a5151389df03dbf48a2c",
+            "file": "src/app/app.component.ts",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "one-root",
+            "styleUrls": [
+                "./app.component.scss"
+            ],
+            "styles": [],
+            "templateUrl": [
+                "./app.component.html"
+            ],
+            "viewProviders": [],
+            "inputsClass": [],
+            "outputsClass": [],
+            "propertiesClass": [
+                {
+                    "name": "title",
+                    "defaultValue": "'one-bah'",
+                    "type": "string",
+                    "optional": false,
+                    "description": "",
+                    "line": 9
+                }
+            ],
+            "methodsClass": [],
+            "hostBindings": [],
+            "hostListeners": [],
+            "description": "",
+            "rawdescription": "",
+            "type": "component",
+            "sourceCode": "import { Component } from '@angular/core';\r\n\r\n@Component({\r\n  selector: 'one-root',\r\n  templateUrl: './app.component.html',\r\n  styleUrls: ['./app.component.scss']\r\n})\r\nexport class AppComponent {\r\n  title = 'one-bah';\r\n}\r\n",
+            "assetsDirs": [],
+            "styleUrlsData": [
+                {
+                    "data": "",
+                    "styleUrl": "./app.component.scss"
+                }
+            ],
+            "stylesData": "",
+            "templateData": "  <div class=\"mx-32\">\r\n    <div data-rob=\"grid grid-cols-2 gap-4 mt-4\"\r\n      data-rob-320=\"grid grid-cols-3 gap-4 mt-4\"\r\n      data-rob-640=\"grid grid-cols-4 gap-4 mt-4\">\r\n      <one-button type=\"secondary\" size=\"large\" full=\"true\">CLICK ME!</one-button>\r\n      <one-button type=\"primary\" size=\"large\" full=\"true\" loading=\"true\">CLICK ME!</one-button>\r\n      <one-button type=\"secondary\" size=\"large\" full=\"true\" disabled=\"disabled\">CLICK ME!</one-button>\r\n    </div>\r\n  </div>\r\n\r\n<router-outlet></router-outlet>\r\n"
+        },
+        {
+            "name": "OneButtonComponent",
+            "id": "component-OneButtonComponent-6741b96a3e7ba435f46b42cdda09367e",
+            "file": "src/app/shared/ui/one-button/one-button.component.ts",
+            "encapsulation": [
+                "ViewEncapsulation.None"
+            ],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "one-button",
+            "styleUrls": [
+                "./one-button.component.scss"
+            ],
+            "styles": [],
+            "templateUrl": [
+                "./one-button.component.html"
+            ],
+            "viewProviders": [],
+            "inputsClass": [
+                {
+                    "name": "disabled",
+                    "defaultValue": "''",
+                    "description": "<p>Is it disabled?</p>\n",
+                    "line": 33,
+                    "type": "\"disabled\" | \"\""
+                },
+                {
+                    "name": "full",
+                    "defaultValue": "'false'",
+                    "description": "<p>Take the full width of the parent container</p>\n",
+                    "line": 45,
+                    "type": "\"true\" | \"false\""
+                },
+                {
+                    "name": "label",
+                    "defaultValue": "''",
+                    "line": 15
+                },
+                {
+                    "name": "loading",
+                    "defaultValue": "'false'",
+                    "description": "<p>Is it loading?</p>\n",
+                    "line": 39,
+                    "type": "\"true\" | \"false\""
+                },
+                {
+                    "name": "size",
+                    "defaultValue": "'medium'",
+                    "description": "<p>How large should the button be?</p>\n",
+                    "line": 27,
+                    "type": "\"small\" | \"medium\" | \"large\""
+                },
+                {
+                    "name": "type",
+                    "defaultValue": "'primary'",
+                    "description": "<p>What type of button do we want?</p>\n",
+                    "line": 21,
+                    "type": "\"primary\" | \"secondary\""
+                }
+            ],
+            "outputsClass": [
+                {
+                    "name": "handleClick",
+                    "defaultValue": "new EventEmitter<Event>()",
+                    "description": "<p>Optional click handler</p>\n",
+                    "line": 51,
+                    "type": "EventEmitter"
+                }
+            ],
+            "propertiesClass": [],
+            "methodsClass": [],
+            "hostBindings": [],
+            "hostListeners": [],
+            "description": "<p>one Button</p>\n",
+            "rawdescription": "one Button",
+            "type": "component",
+            "sourceCode": "import { Component, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core';\r\n\r\n/**\r\n *  one Button\r\n */\r\n@Component({\r\n  selector: 'one-button',\r\n  templateUrl: './one-button.component.html',\r\n  styleUrls: ['./one-button.component.scss'],\r\n  encapsulation: ViewEncapsulation.None\r\n})\r\n\r\nexport class OneButtonComponent {\r\n  @Input()\r\n  label = '';\r\n\r\n  /**\r\n   * What type of button do we want?\r\n   */\r\n  @Input()\r\n  type: 'primary' | 'secondary' = 'primary';\r\n\r\n  /**\r\n   * How large should the button be?\r\n   */\r\n  @Input()\r\n  size: 'small' | 'medium' | 'large' = 'medium';\r\n\r\n  /**\r\n   * Is it disabled?\r\n   */\r\n  @Input()\r\n  disabled: 'disabled' | '' = '';\r\n\r\n  /**\r\n   * Is it loading?\r\n   */\r\n  @Input()\r\n  loading: 'true' | 'false' = 'false';\r\n\r\n  /**\r\n   * Take the full width of the parent container\r\n   */\r\n  @Input()\r\n  full: 'true' | 'false' = 'false';\r\n\r\n  /**\r\n   * Optional click handler\r\n   */\r\n  @Output()\r\n  handleClick = new EventEmitter<Event>();\r\n\r\n  public get classes(): string[] {\r\n    return [\r\n      'one-button',\r\n      `one-button--${this.size}`,\r\n      `one-button--${this.type}`,\r\n      this.loading === 'true' ? 'one-button--loading' : 'false',\r\n      this.full === 'true' ? 'one-button--full' : 'false'\r\n    ];\r\n  }\r\n}\r\n",
+            "assetsDirs": [],
+            "styleUrlsData": [
+                {
+                    "data": ".one-button {\r\n  background: transparent;\r\n  border: none;\r\n  outline: none;\r\n  color: var(--one-button-color);\r\n  box-sizing: border-box;\r\n  padding: var(--one-button-default-padding-y) var(--one-button-default-padding-x);\r\n  border-radius: 0.5rem;\r\n  border-width: 2px;\r\n  border-style: solid;\r\n  border-color: transparent;\r\n  text-transform: uppercase;\r\n  font-family: var(--one-button-font-family);\r\n  font-weight: var(--one-button-font-weight);\r\n  font-size: var(--one-button-font-size);\r\n  position: relative;\r\n\r\n  /**\r\n    *   STATES\r\n    */\r\n  &:hover {\r\n    cursor: pointer;\r\n  }\r\n\r\n  &[disabled] {\r\n    opacity: 0.5;\r\n    pointer-events: none;\r\n  }\r\n\r\n  &--loading {\r\n    opacity: 0.5;\r\n    pointer-events: none;\r\n    color: transparent !important;\r\n\r\n    &::after {\r\n        content: \"\";\r\n        display: block;\r\n        width: 80%;\r\n        height: 80%;\r\n        background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cstyle%3E .path %7B stroke-dasharray: 249; stroke-dashoffset: 0; transform-origin: center; animation: dash 1.4s infinite both; animation-timing-function: ease-in-out; %7D .group %7B animation: group 7s infinite both; animation-timing-function: linear; transform-origin: center; %7D .logo %7B transform: translateY(-1px); %7D @keyframes dash %7B 0%25 %7B stroke-dashoffset: 249; %7D 50%25 %7B stroke-dashoffset: 35; transform:rotate(0); %7D 100%25 %7B stroke-dashoffset: 249; transform:rotate(360deg); %7D %7D @keyframes group %7B 0%25 %7B transform: rotateZ(0deg); %7D 50%25 %7B transform: rotateZ(360deg); %7D 100%25 %7B transform: rotateZ(720deg) %7D %7D %3C/style%3E%3Cg class='group'%3E%3Ccircle class='path' fill='none' stroke-width='10' stroke='%23002554' stroke-linecap='round' cx='50' cy='50' r='40'%3E%3C/circle%3E%3C/g%3E%3Cpath class='logo' fill='%23002554' d='M65.2 47.5l-3 16.8c-.9 5-4 8.3-10.4 8.3h-8.6c-7.2 0-9.3-3.3-8.4-8.3l.3-1.8 5.6-30.9 12.1-4.2-2.1 11.7h7.1c6.4.1 8.3 3.3 7.4 8.4zm-13 .1H51c-1.2 0-1.9.6-2.2 2l-2.3 12.6c-.3 1.4.2 2 1.4 2H49c1.1 0 1.8-.5 1.9-1.5L53.6 49c.1-1-.3-1.5-1.4-1.4z'/%3E%3C/svg%3E\");\r\n        background-repeat: no-repeat;\r\n        background-position: center center;\r\n        position: absolute;\r\n        top: 10%;\r\n        left: 10%;\r\n    }\r\n\r\n    &.one-button--secondary {\r\n        &::after {\r\n            background-image: url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cstyle%3E .path %7B stroke-dasharray: 249; stroke-dashoffset: 0; transform-origin: center; animation: dash 1.4s infinite both; animation-timing-function: ease-in-out; %7D .group %7B animation: group 7s infinite both; animation-timing-function: linear; transform-origin: center; %7D .logo %7B transform: translateY(-1px); %7D @keyframes dash %7B 0%25 %7B stroke-dashoffset: 249; %7D 50%25 %7B stroke-dashoffset: 35; transform:rotate(0); %7D 100%25 %7B stroke-dashoffset: 249; transform:rotate(360deg); %7D %7D @keyframes group %7B 0%25 %7B transform: rotateZ(0deg); %7D 50%25 %7B transform: rotateZ(360deg); %7D 100%25 %7B transform: rotateZ(720deg) %7D %7D %3C/style%3E%3Cg class='group'%3E%3Ccircle class='path' fill='none' stroke-width='10' stroke='%23FFFFFF' stroke-linecap='round' cx='50' cy='50' r='40'%3E%3C/circle%3E%3C/g%3E%3Cpath class='logo' fill='%23FFFFFF' d='M65.2 47.5l-3 16.8c-.9 5-4 8.3-10.4 8.3h-8.6c-7.2 0-9.3-3.3-8.4-8.3l.3-1.8 5.6-30.9 12.1-4.2-2.1 11.7h7.1c6.4.1 8.3 3.3 7.4 8.4zm-13 .1H51c-1.2 0-1.9.6-2.2 2l-2.3 12.6c-.3 1.4.2 2 1.4 2H49c1.1 0 1.8-.5 1.9-1.5L53.6 49c.1-1-.3-1.5-1.4-1.4z'/%3E%3C/svg%3E\");\r\n        }\r\n    }\r\n  }\r\n\r\n  /**\r\n    *   COLORS\r\n    */\r\n  &--primary {\r\n    border-color: var(--one-color-primary-500);\r\n    color: var(--one-color-primary-500);\r\n\r\n    /**\r\n     *  STATES\r\n     */\r\n    &:hover {\r\n      border-color: inherit;\r\n    }\r\n  }\r\n\r\n  &--secondary {\r\n    background-color: var(--one-color-secondary-500);\r\n    border-color: var(--one-color-secondary-500);\r\n\r\n    /**\r\n     *  STATES\r\n     */\r\n     &:hover {\r\n      background-color: var(--one-color-secondary-700);\r\n      border-color: var(--one-color-secondary-700);\r\n    }\r\n  }\r\n\r\n  /**\r\n    *   SIZES\r\n    */\r\n  &--small {\r\n    padding: var(--one-button-small-padding-y) var(--one-button-small-padding-x);\r\n    font-size: var(--one-button-font-size-small);\r\n  }\r\n\r\n  &--large {\r\n    padding: var(--one-button-large-padding-y) var(--one-button-large-padding-x);\r\n    font-size: var(--one-button-font-size-large);\r\n  }\r\n\r\n  &--full {\r\n    width: 100%;\r\n  }\r\n}\r\n",
+                    "styleUrl": "./one-button.component.scss"
+                }
+            ],
+            "stylesData": "",
+            "accessors": {
+                "classes": {
+                    "name": "classes",
+                    "getSignature": {
+                        "name": "classes",
+                        "type": "[]",
+                        "returnType": "string[]",
+                        "line": 53
+                    }
+                }
+            },
+            "templateData": "<button\r\n    [disabled]=\"disabled\"\r\n    (click)=\"handleClick.emit($event)\"\r\n    [ngClass]=\"classes\">\r\n    {{label}}\r\n    <ng-content></ng-content>\r\n</button>\r\n"
+        }
+    ],
+    "modules": [
+        {
+            "name": "AppModule",
+            "children": [
+                {
+                    "type": "providers",
+                    "elements": []
+                },
+                {
+                    "type": "declarations",
+                    "elements": [
+                        {
+                            "name": "AppComponent"
+                        },
+                        {
+                            "name": "OneResizeObserverDirective"
+                        }
+                    ]
+                },
+                {
+                    "type": "imports",
+                    "elements": [
+                        {
+                            "name": "AppRoutingModule"
+                        },
+                        {
+                            "name": "OneButtonModule"
+                        }
+                    ]
+                },
+                {
+                    "type": "exports",
+                    "elements": []
+                },
+                {
+                    "type": "bootstrap",
+                    "elements": [
+                        {
+                            "name": "AppComponent"
+                        }
+                    ]
+                },
+                {
+                    "type": "classes",
+                    "elements": []
+                }
+            ]
+        },
+        {
+            "name": "AppRoutingModule",
+            "children": [
+                {
+                    "type": "providers",
+                    "elements": []
+                },
+                {
+                    "type": "declarations",
+                    "elements": []
+                },
+                {
+                    "type": "imports",
+                    "elements": []
+                },
+                {
+                    "type": "exports",
+                    "elements": []
+                },
+                {
+                    "type": "bootstrap",
+                    "elements": []
+                },
+                {
+                    "type": "classes",
+                    "elements": []
+                }
+            ]
+        },
+        {
+            "name": "OneButtonModule",
+            "children": [
+                {
+                    "type": "providers",
+                    "elements": []
+                },
+                {
+                    "type": "declarations",
+                    "elements": [
+                        {
+                            "name": "OneButtonComponent"
+                        }
+                    ]
+                },
+                {
+                    "type": "imports",
+                    "elements": []
+                },
+                {
+                    "type": "exports",
+                    "elements": [
+                        {
+                            "name": "OneButtonComponent"
+                        }
+                    ]
+                },
+                {
+                    "type": "bootstrap",
+                    "elements": []
+                },
+                {
+                    "type": "classes",
+                    "elements": []
+                }
+            ]
+        }
+    ],
+    "miscellaneous": {
+        "variables": [
+            {
+                "name": "context",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/test.ts",
+                "type": "",
+                "defaultValue": "require.context('./', true, /\\.spec\\.ts$/)"
+            },
+            {
+                "name": "disabled",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/shared/ui/one-button/one-button.stories.ts",
+                "type": "",
+                "defaultValue": "template.bind({})"
+            },
+            {
+                "name": "environment",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/environments/environment.prod.ts",
+                "type": "object",
+                "defaultValue": "{\r\n  production: true\r\n}"
+            },
+            {
+                "name": "environment",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/environments/environment.ts",
+                "type": "object",
+                "defaultValue": "{\r\n  production: false\r\n}"
+            },
+            {
+                "name": "full",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/shared/ui/one-button/one-button.stories.ts",
+                "type": "",
+                "defaultValue": "template.bind({})"
+            },
+            {
+                "name": "loading",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/shared/ui/one-button/one-button.stories.ts",
+                "type": "",
+                "defaultValue": "template.bind({})"
+            },
+            {
+                "name": "primary",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/shared/ui/one-button/one-button.stories.ts",
+                "type": "",
+                "defaultValue": "template.bind({})"
+            },
+            {
+                "name": "require",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/test.ts",
+                "type": "literal type"
+            },
+            {
+                "name": "ResizeObserver",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/shared/directives/one-resize-observer/one-resize-observer.directive.ts",
+                "type": "literal type"
+            },
+            {
+                "name": "secondary",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/shared/ui/one-button/one-button.stories.ts",
+                "type": "",
+                "defaultValue": "template.bind({})"
+            },
+            {
+                "name": "template",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/shared/ui/one-button/one-button.stories.ts",
+                "type": "Story<OneButtonComponent>",
+                "defaultValue": "(args: OneButtonComponent) => ({\r\n  component: OneButtonComponent,\r\n  props: args,\r\n})"
+            }
+        ],
+        "functions": [],
+        "typealiases": [],
+        "enumerations": [],
+        "groupedVariables": {
+            "src/test.ts": [
+                {
+                    "name": "context",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/test.ts",
+                    "type": "",
+                    "defaultValue": "require.context('./', true, /\\.spec\\.ts$/)"
+                },
+                {
+                    "name": "require",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/test.ts",
+                    "type": "literal type"
+                }
+            ],
+            "src/app/shared/ui/one-button/one-button.stories.ts": [
+                {
+                    "name": "disabled",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/shared/ui/one-button/one-button.stories.ts",
+                    "type": "",
+                    "defaultValue": "template.bind({})"
+                },
+                {
+                    "name": "full",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/shared/ui/one-button/one-button.stories.ts",
+                    "type": "",
+                    "defaultValue": "template.bind({})"
+                },
+                {
+                    "name": "loading",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/shared/ui/one-button/one-button.stories.ts",
+                    "type": "",
+                    "defaultValue": "template.bind({})"
+                },
+                {
+                    "name": "primary",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/shared/ui/one-button/one-button.stories.ts",
+                    "type": "",
+                    "defaultValue": "template.bind({})"
+                },
+                {
+                    "name": "secondary",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/shared/ui/one-button/one-button.stories.ts",
+                    "type": "",
+                    "defaultValue": "template.bind({})"
+                },
+                {
+                    "name": "template",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/shared/ui/one-button/one-button.stories.ts",
+                    "type": "Story<OneButtonComponent>",
+                    "defaultValue": "(args: OneButtonComponent) => ({\r\n  component: OneButtonComponent,\r\n  props: args,\r\n})"
+                }
+            ],
+            "src/environments/environment.prod.ts": [
+                {
+                    "name": "environment",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/environments/environment.prod.ts",
+                    "type": "object",
+                    "defaultValue": "{\r\n  production: true\r\n}"
+                }
+            ],
+            "src/environments/environment.ts": [
+                {
+                    "name": "environment",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/environments/environment.ts",
+                    "type": "object",
+                    "defaultValue": "{\r\n  production: false\r\n}"
+                }
+            ],
+            "src/app/shared/directives/one-resize-observer/one-resize-observer.directive.ts": [
+                {
+                    "name": "ResizeObserver",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/shared/directives/one-resize-observer/one-resize-observer.directive.ts",
+                    "type": "literal type"
+                }
+            ]
+        },
+        "groupedFunctions": {},
+        "groupedEnumerations": {},
+        "groupedTypeAliases": {}
+    },
+    "routes": {
+        "name": "<root>",
+        "kind": "module",
+        "className": "AppModule",
+        "children": [
+            {
+                "name": "routes",
+                "filename": "src/app/app-routing.module.ts",
+                "module": "AppRoutingModule",
+                "children": [],
+                "kind": "module"
+            }
+        ]
+    },
+    "coverage": {
+        "count": 8,
+        "status": "low",
+        "files": [
+            {
+                "filePath": "e2e/src/app.po.ts",
+                "type": "class",
+                "linktype": "classe",
+                "name": "AppPage",
+                "coveragePercent": 0,
+                "coverageCount": "0/3",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/app.component.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "AppComponent",
+                "coveragePercent": 0,
+                "coverageCount": "0/2",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/shared/directives/one-resize-observer/one-resize-observer.directive.ts",
+                "type": "directive",
+                "linktype": "directive",
+                "name": "OneResizeObserverDirective",
+                "coveragePercent": 42,
+                "coverageCount": "3/7",
+                "status": "medium"
+            },
+            {
+                "filePath": "src/app/shared/directives/one-resize-observer/one-resize-observer.directive.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "ResizeObserverCallback",
+                "coveragePercent": 0,
+                "coverageCount": "0/2",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/shared/directives/one-resize-observer/one-resize-observer.directive.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "ResizeObserverEntry",
+                "coveragePercent": 0,
+                "coverageCount": "0/6",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/shared/directives/one-resize-observer/one-resize-observer.directive.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "ResizeObserverOptions",
+                "coveragePercent": 50,
+                "coverageCount": "1/2",
+                "status": "medium"
+            },
+            {
+                "filePath": "src/app/shared/directives/one-resize-observer/one-resize-observer.directive.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "ResizeObserverSize",
+                "coveragePercent": 0,
+                "coverageCount": "0/3",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/shared/directives/one-resize-observer/one-resize-observer.directive.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "Window",
+                "coveragePercent": 0,
+                "coverageCount": "0/2",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/shared/directives/one-resize-observer/one-resize-observer.directive.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "ResizeObserver",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/shared/ui/one-button/one-button.component.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "OneButtonComponent",
+                "coveragePercent": 87,
+                "coverageCount": "7/8",
+                "status": "very-good"
+            },
+            {
+                "filePath": "src/app/shared/ui/one-button/one-button.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "disabled",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/shared/ui/one-button/one-button.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "full",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/shared/ui/one-button/one-button.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "loading",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/shared/ui/one-button/one-button.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "primary",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/shared/ui/one-button/one-button.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "secondary",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/shared/ui/one-button/one-button.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "template",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/environments/environment.prod.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "environment",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/environments/environment.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "environment",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/test.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "context",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/test.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "require",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            }
+        ]
+    }
+}

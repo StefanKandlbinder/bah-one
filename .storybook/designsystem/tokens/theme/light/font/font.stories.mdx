@@ -1,0 +1,105 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Design Tokens/Font" />
+
+# Design Tokens
+Design tokens are a tech-agnostic way to store variables. We use tokens instead of hard coded values to ensure a better UI consistency across different platforms.
+
+## Font
+Text is interface, which is why we’ve spent a great amount of time fine-tuning our typographic choices. Use the below tokens to set font-families and font-weights.
+
+### Family
+
+<table style={{ width: "100%" }}>
+  <thead>
+    <tr>
+      <th>CSS Custom Property</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>--one-font-family</td>
+      <td style={{ fontFamily: "var(--one-font-family)" }}>Standard</td>
+    </tr>
+    <tr>
+      <td>--one-font-family-condensed</td>
+      <td style={{ fontFamily: "var(--one-font-family-condensed)" }}>Condensed</td>
+    </tr>
+    <tr>
+      <td>--one-font-weight-bold (Standard)</td>
+      <td
+        style={{
+          fontFamily: "var(--one-font-family)",
+          fontWeight: "var(--one-font-weight-bold",
+        }}
+      >
+        Standard Bold
+      </td>
+    </tr>
+    <tr>
+      <td>--one-font-weight-bold (Condensed)</td>
+      <td
+        style={{
+          fontFamily: "var(--one-font-family-condensed)",
+          fontWeight: "var(--one-font-weight-bold",
+        }}
+      >
+        Condensed Bold
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+### Size
+
+<table style={{ width: "100%" }}>
+  <thead>
+    <tr>
+      <th>CSS Custom Property</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>--one-font-size-0</td>
+      <td style={{ fontSize: "var(--one-font-size-0)" }}>0rem</td>
+    </tr>
+    <tr>
+      <td>--one-font-size-1</td>
+      <td>
+        <span style={{ fontSize: "var(--one-font-size-1)" }}>0.5rem</span>
+      </td>
+    </tr>
+    <tr>
+      <td>--one-font-size-2</td>
+      <td>
+        <span style={{ fontSize: "var(--one-font-size-2)" }}>0.75rem</span>
+      </td>
+    </tr>
+    <tr>
+      <td>--one-font-size-4</td>
+      <td>
+        <span style={{ fontSize: "var(--one-font-size-4)" }}>1rem</span>
+      </td>
+    </tr>
+    <tr>
+      <td>--one-font-size-8</td>
+      <td>
+        <span style={{ fontSize: "var(--one-font-size-8)" }}>2rem</span>
+      </td>
+    </tr>
+    <tr>
+      <td>--one-font-size-16</td>
+      <td>
+        <span style={{ fontSize: "var(--one-font-size-16)" }}>4rem</span>
+      </td>
+    </tr>
+    <tr>
+      <td>--one-font-size-32</td>
+      <td>
+        <span style={{ fontSize: "var(--one-font-size-32)" }}>8rem</span>
+      </td>
+    </tr>
+  </tbody>
+</table>
