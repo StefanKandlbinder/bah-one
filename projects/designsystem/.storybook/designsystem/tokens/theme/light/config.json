@@ -1,0 +1,19 @@
+{
+  "source": [
+    "./projects/designsystem/.storybook/designsystem/tokens/theme/light/**/*tokens*.json"
+  ],
+  "platforms": {
+    "css": {
+      "transformGroup": "css",
+      "buildPath": "./projects/ui/src/assets/styles/",
+      "keepReferences": true,
+      "files": [{
+        "destination": "variables.css",
+        "format": "css/variables",
+        "options": {
+          "outputReferences": true
+        }
+      }]
+    }
+  }
+}

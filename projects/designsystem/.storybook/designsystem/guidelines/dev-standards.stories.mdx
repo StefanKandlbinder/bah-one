@@ -1,0 +1,63 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guidelines/Dev Standards" />
+
+# Dev Standards
+> **This is a component style guide created and enforced internally by the core team of bet-at-home, for the purpose of standardizing our web components.**
+
+## File structure
+
+* One component per file.
+* One component per directory. Though it may make sense to group similar components into the same directory, we’ve found it’s easier to document components when each one has its own directory.
+* Implementation (.ts) and styles of a component should live in the same directory.
+
+```bash
+├── one-button
+│   ├── one-button.component.ts
+│   ├── one-button.component.html
+│   ├── one-button.component.scss
+│   ├── one-button.component.spec.ts
+│   ├── one-button.component.e2e.ts
+│   ├── one-button.component.stories.ts
+│   └── one-button.module.ts
+├── one-button-group
+│   ├── one-button-group.component.ts
+│   ├── one-button-group.component.html
+│   ├── one-button-group.component.scss
+│   ├── one-button-group.component.spec.ts
+│   ├── one-button-group.component.e2e.ts
+│   ├── one-button-group.component.stories.ts
+│   └── one-button-group.module.ts
+```
+## Naming
+
+### HTML tag
+
+#### Prefix
+The prefix has a major role when you are creating a collection of components intended to be used across different projects,
+like @one/components. Components are not scoped because they are globally declared within the webpage,
+which means an “unique” prefix is needed to prevent collisions. The prefix is also able help to quickly identify the collection
+of an component. This also goes along with the [Angular General Naming Guidelines](https://angular.io/guide/styleguide#general-naming-guidelines).
+
+DO NOT do this:
+
+```html
+<component>
+<custom-compnent>
+<spectrum-component>
+```
+Instead, use the "one" prefix for all components:
+```html
+<one-button>
+<one-icon>
+```
+
+#### Name
+Different disciplines use component names to communicate about them. Hence, they must be short, meaningful and pronounceable.
+
+* Noun rather than verb: Components are not actions, they are conceptually “things.” It is better to use nouns instead of verbs, such as “animation” instead of “animating.” “input,” “tab,” “navigation,” and “menu” are some examples.
+* Meaningful: Not over specific, not overly abstract.
+* Short: Maximum of 2 or 3 words.
+* Pronounceable: We want to be able talk about them.
+* Custom element spec compliant: Don’t use reserved names. Reserved names include: annotation-xml, font-face, font-face-src, font-face-uri, font-face-format, font-face-name, missing-glyph, color-profile.
+* Examples: `<one-button>, <one-icon>, <one-header>`.

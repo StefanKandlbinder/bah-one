@@ -1,0 +1,47 @@
+/**
+ * Do not edit directly
+ * Generated on Tue, 16 Feb 2021 15:30:50 GMT
+ */
+
+:root {
+  --one-space-32: 8rem;
+  --one-space-16: 4rem;
+  --one-space-8: 2rem;
+  --one-space-4: 1rem;
+  --one-space-2: 0.5rem;
+  --one-space-1: 0.25rem;
+  --one-space-0: 0;
+  --one-font-weight-bold: 700;
+  --one-font-size-32: 8rem;
+  --one-font-size-16: 4rem;
+  --one-font-size-8: 2rem;
+  --one-font-size-4: 1rem;
+  --one-font-size-2: 0.75rem;
+  --one-font-size-1: 0.5rem;
+  --one-font-size-0: 0;
+  --one-font-family-condensed: 'Roboto Condensed', sans-serif;
+  --one-font-family-default: 'Roboto', sans-serif;
+  --one-color-white-500: #ffffff;
+  --one-color-orange-500: #f57f17;
+  --one-color-red-500: #e53935;
+  --one-color-green-700: #5faf0f;
+  --one-color-green-600: #6bb816;
+  --one-color-green-500: #7ec51e;
+  --one-color-blue-500: #002554;
+  --one-color-primary-500: var(--one-color-blue-500);
+  --one-color-secondary-500: var(--one-color-green-500);
+  --one-color-secondary-700: var(--one-color-green-700);
+  --one-color-negative-500: var(--one-color-white-500);
+  --one-button-font-family: var(--one-font-family-condensed);
+  --one-button-font-weight: var(--one-font-weight-bold);
+  --one-button-font-size-defaut: var(--one-font-size-4);
+  --one-button-font-size-small: var(--one-font-size-2);
+  --one-button-font-size-large: var(--one-font-size-8);
+  --one-button-color: var(--one-color-white-500);
+  --one-button-default-padding-x: var(--one-space-4);
+  --one-button-default-padding-y: var(--one-space-2);
+  --one-button-small-padding-x: var(--one-space-2);
+  --one-button-small-padding-y: var(--one-space-1);
+  --one-button-large-padding-x: var(--one-space-8);
+  --one-button-large-padding-y: var(--one-space-4);
+}
